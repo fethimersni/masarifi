@@ -14,7 +14,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 system-ui,"Segoe UI",Tahoma,sans-serif}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
-.wrap{max-width:520px;margin:0 auto;padding:16px 16px 100px}
+.wrap{max-width:520px;margin:0 auto;padding:16px 16px 150px}
 h1{font-size:20px;font-weight:600;margin:4px 0 14px}
 .seg{display:flex;gap:3px;padding:3px;background:var(--line);border-radius:11px}
 .seg button{flex:1;border:0;background:none;color:var(--mute);padding:8px 0;border-radius:8px}
@@ -47,7 +47,7 @@ h1{font-size:20px;font-weight:600;margin:4px 0 14px}
 .add{position:fixed;inset-inline:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:488px;margin:0 auto;height:52px;border:0;border-radius:26px;background:var(--ac);color:var(--acx);font-size:16px;font-weight:600}
 .sheet{position:fixed;inset:0;display:none;align-items:flex-end;background:rgba(0,0,0,.45)}
 .sheet.open{display:flex}
-.panel{width:100%;max-width:520px;margin:0 auto;padding:18px 16px calc(16px + env(safe-area-inset-bottom,0px));background:var(--card);border-radius:20px 20px 0 0}
+.panel{width:100%;max-width:520px;margin:0 auto;padding:18px 16px calc(16px + env(safe-area-inset-bottom,0px));background:var(--card);border-radius:20px 20px 0 0;max-height:100%;overflow-y:auto}
 .panel input{display:block;width:100%;margin-top:10px;padding:12px;font-size:16px;background:var(--bg);border:1px solid var(--line);border-radius:10px}
 #amt{font-size:26px;font-weight:600;margin-top:0}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
@@ -56,6 +56,14 @@ h1{font-size:20px;font-weight:600;margin:4px 0 14px}
 .save{width:100%;height:48px;margin-top:14px;border:0;border-radius:12px;background:var(--ac);color:var(--acx);font-weight:600;font-size:16px}
 .toast{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));inset-inline:16px;margin:0 auto;max-width:400px;padding:10px 14px;background:var(--ink);color:var(--bg);border-radius:10px;font-size:13px;text-align:center;display:none}
 :focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.top{display:flex;gap:10px}
+.top input{flex:1;min-width:0;width:auto;margin-top:0}
+.ok{flex:none;padding:0 22px;border:0;border-radius:10px;background:var(--ac);color:var(--acx);font-weight:600;font-size:16px}
+.tu{border:0;background:none;color:inherit;text-decoration:underline;font-weight:600;padding:2px 8px}
+.quick{position:fixed;inset-inline:0;bottom:calc(76px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;overflow-x:auto;padding:8px 16px;background:var(--bg);border-top:1px solid var(--line)}
+.quick:empty{display:none}
+.quick button{flex:none;display:flex;gap:6px;align-items:center;padding:8px 14px;background:var(--card);border:1px solid var(--line);border-radius:999px;font-size:14px;white-space:nowrap}
+.quick b{font-weight:500;color:var(--ac);font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -66,14 +74,15 @@ h1{font-size:20px;font-weight:600;margin:4px 0 14px}
   <div id="app"></div>
   <p class="foot"><button class="lnk" data-a="export">تصدير CSV</button><button class="lnk" data-a="backup">نسخة احتياطية</button><button class="lnk" data-a="restore">استعادة</button><input type="file" id="rf" accept=".json,application/json" hidden><br><span id="note">البيانات محفوظة على هذا الجهاز فقط، فخذ نسخة احتياطية من وقت لآخر</span></p>
 </div>
+<div class="quick" id="qk"></div>
 <button class="add" data-a="open">＋ إضافة مصروف</button>
 <div class="sheet" id="sh" data-a="close">
   <div class="panel" data-a="none">
-    <input id="amt" inputmode="decimal" autocomplete="off" placeholder="المبلغ بالدينار" aria-label="المبلغ">
+    <div class="top"><input id="amt" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="المبلغ بالدينار" aria-label="المبلغ"><button class="ok" data-a="save">حفظ</button></div>
     <div class="chips" id="chips"></div>
-    <input id="nm" autocomplete="off" placeholder="البيان (اختياري)" aria-label="البيان">
+    <input id="nm" enterkeyhint="done" autocomplete="off" placeholder="البيان (اختياري)" aria-label="البيان">
     <input id="dt" type="date" aria-label="التاريخ">
-    <button class="save" data-a="save">حفظ</button>
+    
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -90,7 +99,7 @@ const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+Stri
 const num=s=>parseFloat(s.replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[٫,،]/g,"."));
 let items=[],range="all",small=false,cat=null,pick="قهوة",ref=null,pending=null,loaded=false;
 
-function toast(m){const t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display="none",2600)}
+function toast(m,undo){const t=$("#toast");t.textContent=m+" ";if(undo){const b=document.createElement("button");b.className="tu";b.textContent="تراجع";b.onclick=()=>{undo();t.style.display="none"};t.appendChild(b)}t.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display="none",undo?5000:2600)}
 
 function render(){
   const t=new Date(),today=iso(t);
@@ -119,15 +128,26 @@ function render(){
       const dt=pd(d),s=g[d].reduce((a,x)=>a+x.a,0);
       return `<div class="day"><h2><span>${DN[dt.getDay()]} ${dt.getDate()} ${MN[dt.getMonth()]}</span><span>${fmt(s)} د</span></h2><div class="card">${g[d].map(x=>`<div class="row"><i class="dot" style="background:${CC[x.c]||"#8392A3"}"></i><span class="n">${esc(x.n)}</span><span class="a ${x.a>=100?"lg":""}">${fmt(x.a)}</span><button class="x ${pending==x.id?"ask":""}" data-a="del" data-v="${esc(x.id)}">${pending==x.id?"تأكيد الحذف":"حذف"}</button></div>`).join("")}</div></div>`}).join("");
   }
-  $("#app").innerHTML=h;
+  $("#app").innerHTML=h;renderQuick();
 }
 
 function chips(){$("#chips").innerHTML=CATS.map(c=>`<button class="${pick==c[0]?"on":""}" data-a="pick" data-v="${c[0]}"><i class="dot" style="background:${c[1]}"></i>${c[0]}</button>`).join("")}
 
 function persist(next){items=next;render();try{localStorage.setItem("ledger",JSON.stringify(next))}catch(e){toast("تعذّر الحفظ على الجهاز")}}
 
-function openSheet(){$("#amt").value="";$("#nm").value="";$("#dt").value=iso(new Date());chips();$("#sh").classList.add("open");setTimeout(()=>$("#amt").focus(),50)}
-function closeSheet(){$("#sh").classList.remove("open")}
+function openSheet(){$("#amt").value="";$("#nm").value="";$("#dt").value=iso(new Date());chips();$("#sh").classList.add("open");fit();setTimeout(()=>$("#amt").focus(),50)}
+function closeSheet(){$("#sh").classList.remove("open");if(document.activeElement)document.activeElement.blur()}
+function fit(){const v=window.visualViewport,s=$("#sh");if(!v)return;s.style.top=v.offsetTop+"px";s.style.height=v.height+"px";s.style.bottom="auto"}
+if(window.visualViewport){visualViewport.addEventListener("resize",fit);visualViewport.addEventListener("scroll",fit)}
+$("#chips").addEventListener("pointerdown",e=>e.preventDefault());
+$(".panel").addEventListener("keydown",e=>{if(e.key!=="Enter")return;e.preventDefault();if(e.target.id=="amt")$("#nm").focus();else add()});
+let Q=[];
+function renderQuick(){
+  const m={};
+  items.forEach(x=>{const k=x.n+"|"+x.c,e=m[k]||(m[k]={n:x.n,c:x.c,k:0,a:0,d:""});e.k++;if(x.d>=e.d){e.d=x.d;e.a=x.a}});
+  Q=Object.values(m).filter(e=>e.k>=2&&e.a<100).sort((p,q)=>q.k-p.k||(p.d<q.d?1:-1)).slice(0,8);
+  $("#qk").innerHTML=Q.map((e,i)=>`<button data-a="q" data-v="${i}">${esc(e.n)} <b>${+e.a.toFixed(3)}</b></button>`).join("");
+}
 
 function add(){
   const a=num($("#amt").value);
@@ -159,6 +179,7 @@ document.addEventListener("click",e=>{
   else if(a=="open")openSheet();
   else if(a=="close")closeSheet();
   else if(a=="pick"){pick=v;chips()}
+  else if(a=="q"){const e=Q[v];if(!e)return;const id=Date.now().toString(36)+Math.random().toString(36).slice(2,5);persist([...items,{id,d:iso(new Date()),n:e.n,c:e.c,a:e.a}]);toast("أضيف "+e.n+" "+(+e.a.toFixed(3))+" د",()=>persist(items.filter(x=>x.id!=id)))}
   else if(a=="save")add();
   else if(a=="export")exp();else if(a=="backup")backup();else if(a=="restore")$("#rf").click();
   else if(a=="del"){
