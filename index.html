@@ -78,6 +78,22 @@ h1{font-size:20px;font-weight:600;margin:4px 0 14px}
 .dn{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
 .lg{display:grid;gap:6px;font-size:14px}
 .lg b{color:var(--mute);font-weight:400;margin-inline-start:4px}
+.cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.wk{margin-bottom:4px;text-align:center;font-size:11px;color:var(--mute)}
+.cc{height:46px;border-radius:8px;padding:4px 6px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;cursor:pointer}
+.cc span{color:var(--mute)}.cc b{font-size:13px;font-weight:500}
+.l1{background:color-mix(in srgb,var(--ac) 8%,transparent)}
+.l2{background:color-mix(in srgb,var(--ac) 18%,transparent)}
+.l3{background:color-mix(in srgb,var(--ac) 34%,transparent)}
+.l4{background:var(--ac);color:var(--acx)}.l4 span{color:var(--acx)}
+.td{border:1px solid var(--ac)}
+.sel{outline:2px solid var(--ac);outline-offset:1px}
+.hd2{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mc{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.mc div{background:var(--card);border-radius:10px;padding:8px 12px}
+.mc small{display:block;color:var(--mute);font-size:12px}
+.dh{display:flex;justify-content:space-between;padding:12px 14px;font-weight:500}
+.dh+.row{border-top:1px solid var(--line)}
 .top{display:flex;gap:10px}
 .top input{flex:1;min-width:0;width:auto;margin-top:0}
 .ok{flex:none;padding:0 22px;border:0;border-radius:10px;background:var(--ac);color:var(--acx);font-weight:600;font-size:16px}
@@ -90,7 +106,7 @@ h1{font-size:20px;font-weight:600;margin:4px 0 14px}
 </head>
 <body>
 <div class="wrap">
-  <div class="hd"><h1>مصاريفي</h1><button class="pill" data-a="charts">الرسوم</button><button class="pill" data-a="settings">الإعدادات</button></div>
+  <div class="hd"><h1>مصاريفي</h1><button class="pill" data-a="calendar">الروزنامة</button><button class="pill" data-a="charts">الرسوم</button><button class="pill" data-a="settings">الإعدادات</button></div>
   <div class="seg" id="seg"></div>
   <label class="tg"><input type="checkbox" id="sm"> <span id="smt"></span></label>
   <div id="app"></div>
@@ -122,8 +138,8 @@ const pd=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
 const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const num=s=>parseFloat(s.replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[٫,،]/g,"."));
 let items=[],range="all",small=false,cat=null,pick="قهوة",ref=null,pending=null,loaded=false;
-let view=null,bar=null,wipe=false,editId=null,cur=null,menuT=0,lp=null;
-let cfg={theme:"auto",big:100};try{Object.assign(cfg,JSON.parse(localStorage.getItem("cfg")||"{}"))}catch(e){}
+let sub=null,cmo=0,calSel=null,view=null,bar=null,wipe=false,editId=null,cur=null,menuT=0,lp=null;
+let cfg={theme:"auto",big:100,ws:1};try{Object.assign(cfg,JSON.parse(localStorage.getItem("cfg")||"{}"))}catch(e){}
 const saveCfg=()=>{try{localStorage.setItem("cfg",JSON.stringify(cfg))}catch(e){}};
 const theme=()=>{const r=document.documentElement;if(cfg.theme=="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",cfg.theme)};
 const rowH=(x,dt)=>`<div class="row" data-id="${esc(x.id)}">${dt?`<span class="dt">${pd(x.d).getDate()} ${MN[pd(x.d).getMonth()]}</span>`:`<i class="dot" style="background:${CC[x.c]||"#8392A3"}"></i>`}<span class="n">${esc(x.n)}</span><span class="a ${x.a>=cfg.big?"lg":""}">${fmt(x.a)}</span></div>`;
@@ -162,7 +178,7 @@ function render(){
 
 function chips(){$("#chips").innerHTML=CATS.map(c=>`<button class="${pick==c[0]?"on":""}" data-a="pick" data-v="${c[0]}"><i class="dot" style="background:${c[1]}"></i>${c[0]}</button>`).join("")}
 
-function persist(next){items=next;render();try{localStorage.setItem("ledger",JSON.stringify(next))}catch(e){toast("تعذّر الحفظ على الجهاز")}}
+function persist(next){items=next;render();if(view)ov(view);try{localStorage.setItem("ledger",JSON.stringify(next))}catch(e){toast("تعذّر الحفظ على الجهاز")}}
 
 function sel(){const t=new Date(),today=iso(t);let from="0000-00-00";if(range=="week"){const d=new Date(t);d.setDate(d.getDate()-6);from=iso(d)}if(range=="month")from=today.slice(0,8)+"01";let all=items.filter(x=>x.d>=from);if(small)all=all.filter(x=>x.a<cfg.big);return{all,today}}
 const lbl=d=>{const t=pd(d);return t.getDate()+" "+MN[t.getMonth()]};
@@ -178,21 +194,114 @@ function chartsHTML(){
   const ds=[];for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1))ds.push(iso(d));
   const mx=Math.max(...ds.map(d=>dd[d]||0),1),W=340,H=130,bw=W/ds.length;
   const bars=ds.map((d,i)=>{const v=dd[d]||0,h=v/mx*H,x=(ds.length-1-i)*bw;return `<g data-a="bar" data-v="${d}"><rect x="${x}" y="0" width="${bw}" height="${H}" fill="transparent"/><rect x="${x+1}" y="${H-h}" width="${Math.max(bw-2,1)}" height="${v?Math.max(h,2):0}" rx="2" fill="var(--ac)" opacity="${bar&&bar!=d?.35:1}"/></g>`}).join("");
-  const R=52,C=2*Math.PI*R;let off=0;
-  const arcs=cats.map(c=>{const l=by[c]/tot*C,t=`<circle cx="70" cy="70" r="${R}" fill="none" stroke="${CC[c]}" stroke-width="22" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"/>`;off+=l;return t}).join("");
   const top=ds.reduce((m,d)=>(dd[d]||0)>(dd[m]||0)?d:m,ds[0]);
   const cap=bar&&ds.includes(bar)?`${lbl(bar)}: ${fmt(dd[bar]||0)} د`:`أعلى يوم: ${lbl(top)} (${fmt(dd[top]||0)} د) · اضغط على عمود لرؤية قيمته`;
   const hint=!small&&all.some(x=>x.a>=cfg.big)?`<div class="sub">تلميح: فعّل «المصاريف اليومية فقط» لتظهر الفروق بين الأيام العادية.</div>`:"";
-  return ctl+hint+`<h2 class="ch">المصاريف اليومية</h2><div class="sub">${cap}</div><svg class="ct" viewBox="0 0 ${W} ${H+16}">${bars}<line x1="0" x2="${W}" y1="${H}" y2="${H}" stroke="var(--line)"/><text x="${W}" y="${H+12}" text-anchor="end">${lbl(ds[0])}</text><text x="0" y="${H+12}">${lbl(ds[ds.length-1])}</text></svg><h2 class="ch">حسب الفئة</h2><div class="dn"><svg viewBox="0 0 140 140" width="150" height="150">${arcs}<text x="70" y="75" text-anchor="middle" style="fill:var(--ink);font-size:16px;font-weight:600">${Math.round(tot)}</text></svg><div class="lg">${cats.map(c=>`<div><i class="dot" style="background:${CC[c]}"></i> ${c} <b>${Math.round(by[c]/tot*100)}%</b></div>`).join("")}</div></div>`;
+  let subH="";
+  if(sub&&by[sub]){const g={};all.filter(x=>x.c==sub).forEach(x=>g[x.n]=(g[x.n]||0)+x.a);const ks=Object.keys(g).sort((p,q)=>g[q]-g[p]);const P=ks.slice(0,6).map((k,i)=>({n:k,v:g[k],c:CC[sub],o:1-i*.13}));const rest=ks.slice(6).reduce((q,k)=>q+g[k],0);if(rest>0)P.push({n:"أخرى",v:rest,c:CC[sub],o:.2});subH=`<h2 class="ch">تفاصيل «${esc(sub)}» · ${fmt(by[sub])} د</h2>`+donut(P,by[sub])}
+  return ctl+hint+`<h2 class="ch">المصاريف اليومية</h2><div class="sub">${cap}</div><svg class="ct" viewBox="0 0 ${W} ${H+16}">${bars}<line x1="0" x2="${W}" y1="${H}" y2="${H}" stroke="var(--line)"/><text x="${W}" y="${H+12}" text-anchor="end">${lbl(ds[0])}</text><text x="0" y="${H+12}">${lbl(ds[ds.length-1])}</text></svg><h2 class="ch">حسب الفئة (اضغط على فئة لتفصيلها)</h2>${donut(cats.map(c=>({n:c,v:by[c],c:CC[c],a:"sub"})),tot)}${subH}`;
 }
 function settingsHTML(){
   return `<div class="set"><label>المظهر</label><div class="seg">${[["auto","تلقائي"],["light","فاتح"],["dark","داكن"]].map(t=>`<button class="${cfg.theme==t[0]?"on":""}" data-a="theme" data-v="${t[0]}">${t[1]}</button>`).join("")}</div>
 <label>حدّ «المصروف الكبير» (بالدينار)</label><input id="big" inputmode="decimal" value="${cfg.big}">
+<label>أول يوم في الأسبوع (الروزنامة)</label><div class="seg">${[[1,"الإثنين"],[6,"السبت"],[0,"الأحد"]].map(t=>`<button class="${cfg.ws==t[0]?"on":""}" data-a="ws" data-v="${t[0]}">${t[1]}</button>`).join("")}</div>
 <label>البيانات (${items.length} مصروف على هذا الجهاز)</label>
-<button class="act" data-a="export">تصدير CSV</button><button class="act" data-a="backup">نسخة احتياطية</button><button class="act" data-a="restore">استعادة نسخة احتياطية</button>
+<button class="act" data-a="xlsx">تصدير إلى Excel (مع الرسوم)</button><button class="act" data-a="export">تصدير CSV</button><button class="act" data-a="backup">نسخة احتياطية</button><button class="act" data-a="restore">استعادة نسخة احتياطية</button>
 <button class="act bad" data-a="wipe">${wipe?"اضغط مرة أخرى لتأكيد حذف كل المصاريف":"حذف كل البيانات"}</button></div>`;
 }
-function ov(v){view=v;const o=$("#ov");if(!v){o.style.display="none";return}$("#ovt").textContent=v=="charts"?"الرسوم البيانية":"الإعدادات";$("#ovb").innerHTML=v=="charts"?chartsHTML():settingsHTML();o.style.display="block"}
+function donut(P,tot){
+  const R=52,C=2*Math.PI*R;let off=0;
+  const arcs=P.map(p=>{const l=p.v/tot*C,t=`<circle cx="70" cy="70" r="${R}" fill="none" stroke="${p.c}" opacity="${p.o||1}" stroke-width="22" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"${p.a?` data-a="${p.a}" data-v="${esc(p.n)}"`:""}/>`;off+=l;return t}).join("");
+  return `<div class="dn"><svg viewBox="0 0 140 140" width="150" height="150">${arcs}<text x="70" y="75" text-anchor="middle" style="fill:var(--ink);font-size:16px;font-weight:600">${Math.round(tot)}</text></svg><div class="lg">${P.map(p=>`<div${p.a?` data-a="${p.a}" data-v="${esc(p.n)}" style="cursor:pointer;font-weight:${p.n==sub?600:400}"`:""}><i class="dot" style="background:${p.c};opacity:${p.o||1}"></i> ${esc(p.n)} <b>${Math.round(p.v/tot*100)}%</b></div>`).join("")}</div></div>`}
+const SN=["أحد","إثنين","ثلاثاء","أربعاء","خميس","جمعة","سبت"];
+function calHTML(){
+  const t=new Date(),today=iso(t),b=new Date(t.getFullYear(),t.getMonth()+cmo,1),y=b.getFullYear(),m=b.getMonth(),n=new Date(y,m+1,0).getDate(),pre=iso(b).slice(0,8),ym=pre.slice(0,7);
+  const dd={};items.forEach(x=>{if(x.d.startsWith(ym))dd[x.d]=(dd[x.d]||0)+x.a});
+  const mt=Object.values(dd).reduce((q,v)=>q+v,0),hi=Object.keys(dd).sort((p,q)=>dd[q]-dd[p])[0];
+  const lead=(b.getDay()-cfg.ws+7)%7,big=cfg.big;
+  let g="";for(let i=0;i<lead;i++)g+="<div></div>";
+  for(let d=1;d<=n;d++){const k=pre+String(d).padStart(2,"0"),a=dd[k]||0,l=a>=big?4:a>=big*.4?3:a>=big*.1?2:a>0?1:0;
+    g+=`<div class="cc l${l}${k==calSel?" sel":""}${k==today?" td":""}" data-a="day" data-v="${k}"><span>${d}</span><b>${a?(a>=100?Math.round(a):+a.toFixed(1)):""}</b></div>`}
+  let det=`<div class="empty">اضغط على يوم لعرض تفاصيله.</div>`;
+  if(calSel&&calSel.startsWith(ym)){const Ls=items.filter(x=>x.d==calSel),s=Ls.reduce((q,x)=>q+x.a,0);
+    det=`<div class="card" style="margin-top:12px"><div class="dh"><span>${DN[pd(calSel).getDay()]} ${lbl(calSel)}</span><span>${fmt(s)} د</span></div>${Ls.length?Ls.map(x=>rowH(x)).join(""):`<div class="sub" style="padding:0 14px 8px">لا مصاريف مسجّلة في هذا اليوم.</div>`}<div style="padding:10px 14px 14px"><div class="sub">اضغط مطولاً على أي سطر للتعديل أو الحذف</div><button class="act" data-a="addday" data-v="${calSel}">＋ إضافة مصروف لهذا اليوم</button></div></div>`}
+  return `<div class="hd2"><button class="pill" data-a="cmo" data-v="-1">السابق</button><b>${MN[m]} ${y}</b><button class="pill" data-a="cmo" data-v="1">التالي</button></div><div class="mc"><div><small>مجموع الشهر</small><b>${fmt(mt)} د</b></div><div><small>أعلى يوم</small><b>${hi?lbl(hi):"—"}</b></div></div><div class="cg wk">${[0,1,2,3,4,5,6].map(i=>`<div>${SN[(cfg.ws+i)%7]}</div>`).join("")}</div><div class="cg">${g}</div><div class="sub">الأغمق أكثر صرفاً، والأزرق الممتلئ ${big} د فأكثر</div><div id="cdet">${det}</div>`}
+const X=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ser=d=>{const[y,m,k]=d.split("-").map(Number);return Math.round((Date.UTC(y,m-1,k)-Date.UTC(1899,11,30))/864e5)};
+const CL=k=>String.fromCharCode(65+k),r3=v=>Math.round(v*1000)/1000;
+const HD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',RT="http://schemas.openxmlformats.org/officeDocument/2006/relationships/";
+const SM="http://schemas.openxmlformats.org/spreadsheetml/2006/main",CN="http://schemas.openxmlformats.org/drawingml/2006/chart",AN="http://schemas.openxmlformats.org/drawingml/2006/main";
+const cx=(r,k,v,s)=>{const a=CL(k)+r;s=s||0;if(v&&v.f!=null)return `<c r="${a}" s="${s}"${v.str?' t="str"':""}><f>${X(v.f)}</f><v>${v.str?X(v.v):v.v}</v></c>`;if(typeof v=="number")return `<c r="${a}" s="${s}"><v>${v}</v></c>`;return `<c r="${a}" s="${s}" t="inlineStr"><is><t>${X(v)}</t></is></c>`};
+function sheet(cells,w,dr){const R={};cells.forEach(([r,k,v,s])=>(R[r]=R[r]||[]).push([k,cx(r,k,v,s)]));
+  const rows=Object.keys(R).map(Number).sort((a,b)=>a-b).map(r=>`<row r="${r}">${R[r].sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join("")}</row>`).join("");
+  return `${HD}<worksheet xmlns="${SM}" xmlns:r="${RT.slice(0,-1)}"><sheetViews><sheetView rightToLeft="1" workbookViewId="0"/></sheetViews><cols>${w.map((x,i)=>`<col min="${i+1}" max="${i+1}" width="${x}" customWidth="1"/>`).join("")}</cols><sheetData>${rows}</sheetData>${dr?'<drawing r:id="rId1"/>':""}</worksheet>`}
+const STY=`${HD}<styleSheet xmlns="${SM}"><numFmts count="3"><numFmt numFmtId="164" formatCode="0.000"/><numFmt numFmtId="165" formatCode="yyyy-mm-dd"/><numFmt numFmtId="166" formatCode="0.0%"/></numFmts><fonts count="3"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="14"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFDCE6F5"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="8"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="165" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="166" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="164" fontId="1" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1"/><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+const rel=l=>`${HD}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${l.map((t,i)=>`<Relationship Id="rId${i+1}" Type="${RT}${t[0]}" Target="${t[1]}"/>`).join("")}</Relationships>`;
+const dr=l=>`${HD}<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="${AN}" xmlns:r="${RT.slice(0,-1)}" xmlns:c="${CN}">${l.map((q,i)=>`<xdr:twoCellAnchor><xdr:from><xdr:col>${q[0]}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>${q[1]}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from><xdr:to><xdr:col>${q[2]}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>${q[3]}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to><xdr:graphicFrame macro=""><xdr:nvGraphicFramePr><xdr:cNvPr id="${i+2}" name="Chart ${i+1}"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/></xdr:xfrm><a:graphic><a:graphicData uri="${CN}"><c:chart r:id="rId${i+1}"/></a:graphicData></a:graphic></xdr:graphicFrame><xdr:clientData/></xdr:twoCellAnchor>`).join("")}</xdr:wsDr>`;
+function chart(kind,title,cR,vR,cats,vals,colors){
+  const sc=`<c:cat><c:strRef><c:f>${X(cR)}</c:f><c:strCache><c:ptCount val="${cats.length}"/>${cats.map((v,i)=>`<c:pt idx="${i}"><c:v>${X(v)}</c:v></c:pt>`).join("")}</c:strCache></c:strRef></c:cat>`;
+  const nc=`<c:val><c:numRef><c:f>${X(vR)}</c:f><c:numCache><c:formatCode>General</c:formatCode><c:ptCount val="${vals.length}"/>${vals.map((v,i)=>`<c:pt idx="${i}"><c:v>${v}</c:v></c:pt>`).join("")}</c:numCache></c:numRef></c:val>`;
+  const dp=colors?colors.map((k,i)=>`<c:dPt><c:idx val="${i}"/><c:bubble3D val="0"/><c:spPr><a:solidFill><a:srgbClr val="${k.slice(1)}"/></a:solidFill></c:spPr></c:dPt>`).join(""):"";
+  const pie=kind=="pie";
+  const body=pie?`<c:pieChart><c:varyColors val="1"/><c:ser><c:idx val="0"/><c:order val="0"/>${dp}<c:dLbls><c:showLegendKey val="0"/><c:showVal val="0"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="1"/><c:showBubbleSize val="0"/><c:showLeaderLines val="1"/></c:dLbls>${sc}${nc}</c:ser><c:firstSliceAng val="0"/></c:pieChart>`
+  :`<c:barChart><c:barDir val="col"/><c:grouping val="clustered"/><c:varyColors val="0"/><c:ser><c:idx val="0"/><c:order val="0"/><c:spPr><a:solidFill><a:srgbClr val="1F57B5"/></a:solidFill></c:spPr><c:invertIfNegative val="0"/>${sc}${nc}</c:ser><c:gapWidth val="40"/><c:axId val="111"/><c:axId val="222"/></c:barChart><c:catAx><c:axId val="111"/><c:scaling><c:orientation val="minMax"/></c:scaling><c:delete val="0"/><c:axPos val="b"/><c:numFmt formatCode="General" sourceLinked="0"/><c:tickLblPos val="nextTo"/><c:crossAx val="222"/><c:crosses val="autoZero"/><c:auto val="1"/><c:lblAlgn val="ctr"/><c:lblOffset val="100"/></c:catAx><c:valAx><c:axId val="222"/><c:scaling><c:orientation val="minMax"/></c:scaling><c:delete val="0"/><c:axPos val="l"/><c:majorGridlines/><c:numFmt formatCode="General" sourceLinked="0"/><c:tickLblPos val="nextTo"/><c:crossAx val="111"/><c:crosses val="autoZero"/><c:crossBetween val="between"/></c:valAx>`;
+  return `${HD}<c:chartSpace xmlns:c="${CN}" xmlns:a="${AN}" xmlns:r="${RT.slice(0,-1)}"><c:roundedCorners val="0"/><c:chart><c:title><c:tx><c:rich><a:bodyPr/><a:p><a:r><a:t>${X(title)}</a:t></a:r></a:p></c:rich></c:tx><c:overlay val="0"/></c:title><c:autoTitleDeleted val="0"/><c:plotArea><c:layout/>${body}</c:plotArea>${pie?'<c:legend><c:legendPos val="r"/><c:overlay val="0"/></c:legend>':""}<c:plotVisOnly val="1"/></c:chart></c:chartSpace>`}
+function zip(files){
+  const te=new TextEncoder(),parts=[],cd=[];let off=0;
+  const crc=b=>{let c=-1;for(let i=0;i<b.length;i++){c^=b[i];for(let k=0;k<8;k++)c=c&1?(c>>>1)^0xEDB88320:c>>>1}return(~c)>>>0};
+  files.forEach(([n,s])=>{const nb=te.encode(n),d=te.encode(s),h=crc(d);
+    const lh=new DataView(new ArrayBuffer(30));lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint32(14,h,true);lh.setUint32(18,d.length,true);lh.setUint32(22,d.length,true);lh.setUint16(26,nb.length,true);
+    parts.push(new Uint8Array(lh.buffer),nb,d);
+    const ch=new DataView(new ArrayBuffer(46));ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint32(16,h,true);ch.setUint32(20,d.length,true);ch.setUint32(24,d.length,true);ch.setUint16(28,nb.length,true);ch.setUint32(42,off,true);
+    cd.push(new Uint8Array(ch.buffer),nb);off+=30+nb.length+d.length});
+  const cs=cd.reduce((q,x)=>q+x.length,0),e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cd,new Uint8Array(e.buffer)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})}
+function buildXlsx(){
+  const it=items.slice().sort((p,q)=>p.d<q.d?-1:p.d>q.d?1:0),n=it.length,L=n+1,S="'المصاريف'!";
+  const A=`${S}$A$2:$A$${L}`,Cc=`${S}$C$2:$C$${L}`,D=`${S}$D$2:$D$${L}`;
+  const tot=r3(it.reduce((q,x)=>q+x.a,0));
+  const s1=[[1,0,"التاريخ",1],[1,1,"البيان",1],[1,2,"الفئة",1],[1,3,"المبلغ",1]];
+  it.forEach((x,i)=>s1.push([i+2,0,ser(x.d),2],[i+2,1,x.n],[i+2,2,x.c],[i+2,3,x.a,3]));
+  s1.push([n+3,2,"المجموع",7],[n+3,3,{f:`SUM(D2:D${L})`,v:tot},5]);
+  const by={};it.forEach(x=>by[x.c]=(by[x.c]||0)+x.a);
+  const cats=Object.keys(by).sort((p,q)=>by[q]-by[p]),m=cats.length;
+  const s2=[[1,0,"الفئة",1],[1,1,"المجموع",1],[1,2,"النسبة",1],[1,3,"العدد",1]];
+  cats.forEach((c,i)=>{const r=i+2;s2.push([r,0,c],[r,1,{f:`SUMIF(${Cc},A${r},${D})`,v:r3(by[c])},3],[r,2,{f:`B${r}/SUM(B$2:B$${m+1})`,v:by[c]/tot},4],[r,3,{f:`COUNTIF(${Cc},A${r})`,v:it.filter(x=>x.c==c).length}])});
+  s2.push([m+2,0,"المجموع",7],[m+2,1,{f:`SUM(B2:B${m+1})`,v:tot},5]);
+  const dd={};it.forEach(x=>dd[x.d]=(dd[x.d]||0)+x.a);
+  const first=it[0].d,last=it[n-1].d;let a=pd(first);const z=pd(last);if((z-a)/864e5>89){a=new Date(z);a.setDate(z.getDate()-89)}
+  const ds=[];for(let d=new Date(a);d<=z;d.setDate(d.getDate()+1))ds.push(iso(d));const k=ds.length;
+  s2.push([1,5,"اليوم",1],[1,6,"المصروف اليومي",1]);
+  ds.forEach((d,i)=>{const r=i+2;s2.push([r,5,d],[r,6,{f:`SUMIF(${A},${ser(d)},${D})`,v:r3(dd[d]||0)},3])});
+  const mo={};it.forEach(x=>{const q=x.d.slice(0,7);mo[q]=(mo[q]||0)+x.a});
+  s2.push([1,8,"الشهر",1],[1,9,"المجموع",1]);
+  Object.keys(mo).sort().forEach((q,i)=>{const[y,mm]=q.split("-").map(Number),r=i+2;s2.push([r,8,MN[mm-1]+" "+y],[r,9,{f:`SUMIFS(${D},${A},">="&${ser(q+"-01")},${A},"<"&${ser(iso(new Date(y,mm,1)))})`,v:r3(mo[q])},3])});
+  const mx=Math.max(...ds.map(d=>dd[d]||0)),md=ds.find(d=>(dd[d]||0)==mx),days=(pd(last)-pd(first))/864e5+1;
+  s2.push([1,11,"ملخص",1],[1,12,"",1],[2,11,"المجموع"],[2,12,{f:`SUM(${D})`,v:tot},3],[3,11,"عدد العمليات"],[3,12,{f:`COUNT(${D})`,v:n}],[4,11,"عدد الأيام"],[4,12,days],[5,11,"المعدل اليومي"],[5,12,{f:"M2/M4",v:r3(tot/days)},3],[6,11,"أعلى يوم"],[6,12,{f:`INDEX(F2:F${k+1},MATCH(MAX(G2:G${k+1}),G2:G${k+1},0))`,v:md,str:1}],[7,11,"قيمته"],[7,12,{f:`MAX(G2:G${k+1})`,v:r3(mx)},3]);
+  const s3=[],c3=[],T="'تفاصيل الفئات'!";let r=1;
+  cats.forEach(c=>{const g={};it.filter(x=>x.c==c).forEach(x=>g[x.n]=(g[x.n]||0)+x.a);
+    const ks=Object.keys(g).sort((p,q)=>g[q]-g[p]),P=ks.slice(0,6).map(t=>[t,r3(g[t])]),rest=r3(ks.slice(6).reduce((q,t)=>q+g[t],0));if(rest>0)P.push(["أخرى",rest]);
+    s3.push([r,0,c,6],[r+1,0,"البيان",1],[r+1,1,"المبلغ",1]);P.forEach((t,i)=>s3.push([r+2+i,0,t[0]],[r+2+i,1,t[1],3]));
+    c3.push({r0:r-1,t:c+" — التفاصيل",a:`${T}$A$${r+2}:$A$${r+1+P.length}`,b:`${T}$B$${r+2}:$B$${r+1+P.length}`,c:P.map(t=>t[0]),v:P.map(t=>t[1])});r+=17});
+  const SS="'الملخص'!",charts=[chart("pie","المصاريف حسب الفئة",`${SS}$A$2:$A$${m+1}`,`${SS}$B$2:$B$${m+1}`,cats,cats.map(c=>r3(by[c])),cats.map(c=>CC[c]||"#8392A3")),chart("bar","المصاريف اليومية",`${SS}$F$2:$F$${k+1}`,`${SS}$G$2:$G$${k+1}`,ds,ds.map(d=>r3(dd[d]||0))),...c3.map(o=>chart("pie",o.t,o.a,o.b,o.c,o.v))];
+  const ov=(p,t)=>`<Override PartName="${p}" ContentType="application/vnd.openxmlformats-officedocument.${t}+xml"/>`;
+  return zip([
+    ["[Content_Types].xml",`${HD}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>${ov("/xl/workbook.xml","spreadsheetml.sheet.main")}${[1,2,3].map(i=>ov(`/xl/worksheets/sheet${i}.xml`,"spreadsheetml.worksheet")).join("")}${ov("/xl/styles.xml","spreadsheetml.styles")}${[1,2].map(i=>ov(`/xl/drawings/drawing${i}.xml`,"drawing")).join("")}${charts.map((_,i)=>ov(`/xl/charts/chart${i+1}.xml`,"drawingml.chart")).join("")}</Types>`],
+    ["_rels/.rels",rel([["officeDocument","xl/workbook.xml"]])],
+    ["xl/workbook.xml",`${HD}<workbook xmlns="${SM}" xmlns:r="${RT.slice(0,-1)}"><sheets><sheet name="المصاريف" sheetId="1" r:id="rId1"/><sheet name="الملخص" sheetId="2" r:id="rId2"/><sheet name="تفاصيل الفئات" sheetId="3" r:id="rId3"/></sheets></workbook>`],
+    ["xl/_rels/workbook.xml.rels",rel([["worksheet","worksheets/sheet1.xml"],["worksheet","worksheets/sheet2.xml"],["worksheet","worksheets/sheet3.xml"],["styles","styles.xml"]])],
+    ["xl/styles.xml",STY],
+    ["xl/worksheets/sheet1.xml",sheet(s1,[14,28,16,14])],
+    ["xl/worksheets/sheet2.xml",sheet(s2,[16,14,10,10,4,14,16,4,16,14,4,16,14],1)],
+    ["xl/worksheets/_rels/sheet2.xml.rels",rel([["drawing","../drawings/drawing1.xml"]])],
+    ["xl/worksheets/sheet3.xml",sheet(s3,[26,14],1)],
+    ["xl/worksheets/_rels/sheet3.xml.rels",rel([["drawing","../drawings/drawing2.xml"]])],
+    ["xl/drawings/drawing1.xml",dr([[0,13,5,30],[0,31,5,50]])],
+    ["xl/drawings/_rels/drawing1.xml.rels",rel([["chart","../charts/chart1.xml"],["chart","../charts/chart2.xml"]])],
+    ["xl/drawings/drawing2.xml",dr(c3.map(o=>[3,o.r0,10,o.r0+15]))],
+    ["xl/drawings/_rels/drawing2.xml.rels",rel(c3.map((_,i)=>["chart",`../charts/chart${i+3}.xml`]))],
+    ...charts.map((x,i)=>[`xl/charts/chart${i+1}.xml`,x])])}
+function ov(v){view=v;const o=$("#ov");if(!v){o.style.display="none";return}$("#ovt").textContent={charts:"الرسوم البيانية",settings:"الإعدادات",calendar:"الروزنامة"}[v];$("#ovb").innerHTML=v=="charts"?chartsHTML():v=="settings"?settingsHTML():calHTML();o.style.display="block"}
 function menu(id){const x=items.find(i=>i.id==id);if(!x)return;cur=id;menuT=Date.now();$("#mt").textContent=x.n+" · "+fmt(x.a)+" د";$("#mn").classList.add("open")}
 function mclose(){$("#mn").classList.remove("open")}
 document.addEventListener("pointerdown",e=>{const r=e.target.closest(".row[data-id]");if(!r)return;const id=r.dataset.id;lp={x:e.clientX,y:e.clientY,t:setTimeout(()=>{lp=null;if(navigator.vibrate)navigator.vibrate(15);menu(id)},450)}});
@@ -253,7 +362,13 @@ document.addEventListener("click",e=>{
   else if(a=="q"){const e=Q[v];if(!e)return;const id=Date.now().toString(36)+Math.random().toString(36).slice(2,5);persist([...items,{id,d:iso(new Date()),n:e.n,c:e.c,a:e.a}]);toast("أضيف "+e.n+" "+(+e.a.toFixed(3))+" د",()=>persist(items.filter(x=>x.id!=id)))}
   else if(a=="save")add();
   else if(a=="export")exp();else if(a=="backup")backup();else if(a=="restore")$("#rf").click();
-  else if(a=="charts"||a=="settings")ov(a);
+  else if(a=="charts"||a=="settings"||a=="calendar"){if(a=="calendar"){cmo=0;calSel=iso(new Date())}ov(a)}
+  else if(a=="day"){calSel=v;ov(view);const e=$("#cdet");if(e)e.scrollIntoView({behavior:"smooth",block:"nearest"})}
+  else if(a=="cmo"){cmo+=+v;calSel=null}
+  else if(a=="addday"){openSheet();$("#dt").value=v}
+  else if(a=="sub")sub=sub==v?null:v;
+  else if(a=="ws"){cfg.ws=+v;saveCfg()}
+  else if(a=="xlsx"){if(!items.length)toast("لا توجد بيانات للتصدير");else{try{dl("masarifi.xlsx","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",buildXlsx());toast("تم إنشاء ملف Excel")}catch(e){toast("تعذّر إنشاء الملف")}}}
   else if(a=="ovx")ov(null);
   else if(a=="bar")bar=bar==v?null:v;
   else if(a=="small"){small=!small;$("#sm").checked=small;render()}
@@ -262,7 +377,7 @@ document.addEventListener("click",e=>{
   else if(a=="medit"){mclose();openSheet(cur)}
   else if(a=="mdel"){const x=items.find(i=>i.id==cur);mclose();if(x){persist(items.filter(i=>i.id!=x.id));toast("حُذف "+x.n,()=>persist([...items,x]))}}
   else if(a=="mclose")mclose();
-  if(view)ov(view);
+  if(view&&a!="day")ov(view);
 });
 $("#sm").addEventListener("change",e=>{small=e.target.checked;render()});
 
