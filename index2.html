@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مصاريفي</title>
+<meta name="theme-color" content="#1F57B5"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png" type="image/png"><link rel="apple-touch-icon" href="icon-180.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="مصاريفي">
+<style>
+:root{--bg:#F3F6FA;--card:#fff;--ink:#10243A;--mute:#5C6F84;--line:#DCE3EC;--ac:#1F57B5;--acx:#fff;--bad:#B93A2B;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1622;--card:#14243A;--ink:#E8EEF6;--mute:#93A4B8;--line:#243650;--ac:#6EA2F0;--acx:#0C1622;--bad:#F08A7A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0C1622;--card:#14243A;--ink:#E8EEF6;--mute:#93A4B8;--line:#243650;--ac:#6EA2F0;--acx:#0C1622;--bad:#F08A7A;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 system-ui,"Segoe UI",Tahoma,sans-serif}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{max-width:520px;margin:0 auto;padding:16px 16px 150px}
+h1{font-size:20px;font-weight:600;margin:4px 0 14px}
+.seg{display:flex;gap:3px;padding:3px;background:var(--line);border-radius:11px}
+.seg button{flex:1;border:0;background:none;color:var(--mute);padding:8px 0;border-radius:8px}
+.seg .on{background:var(--card);color:var(--ink);font-weight:500}
+.tg{display:flex;align-items:center;gap:8px;margin:12px 0 0;color:var(--mute);font-size:13px}
+.tg input{width:18px;height:18px;accent-color:var(--ac)}
+.hero{margin:20px 0 14px}
+.hero small{display:block;color:var(--mute);font-size:13px}
+.big{font-size:44px;font-weight:600;line-height:1.15;font-variant-numeric:tabular-nums}
+.u{font-size:18px;color:var(--mute);margin-inline-start:6px}
+.bar{display:flex;gap:2px;height:14px;border-radius:7px;overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;min-width:3px}
+.cat{display:flex;align-items:center;gap:10px;width:100%;padding:10px 2px;background:none;border:0;border-bottom:1px solid var(--line);text-align:start}
+.cat.on{font-weight:600}
+.cat .n{flex:1}
+.cat .p{width:40px;text-align:end;color:var(--mute);font-size:12px}
+.dot{display:inline-block;flex:none;width:10px;height:10px;border-radius:50%}
+.day h2{display:flex;justify-content:space-between;margin:24px 2px 6px;font-size:13px;font-weight:500;color:var(--mute)}
+.card{background:var(--card);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:11px 14px}
+.row+.row{border-top:1px solid var(--line)}
+.row .n{flex:1;min-width:0;overflow-wrap:anywhere}
+.row .a{font-weight:500;font-variant-numeric:tabular-nums}
+.row .lg{color:var(--ac);font-weight:600}
+.x{border:0;background:none;color:var(--mute);font-size:12px;padding:6px 2px}
+.x.ask{color:var(--bad);font-weight:500}
+.empty{padding:36px 8px;text-align:center;color:var(--mute)}
+.foot{margin:28px 0 0;color:var(--mute);font-size:12px;text-align:center}
+.lnk{border:0;background:none;color:var(--ac);padding:6px 8px;font-size:13px}
+.add{position:fixed;inset-inline:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:488px;margin:0 auto;height:52px;border:0;border-radius:26px;background:var(--ac);color:var(--acx);font-size:16px;font-weight:600}
+.sheet{position:fixed;inset:0;display:none;align-items:flex-end;background:rgba(0,0,0,.45)}
+.sheet.open{display:flex}
+.panel{width:100%;max-width:520px;margin:0 auto;padding:18px 16px calc(16px + env(safe-area-inset-bottom,0px));background:var(--card);border-radius:20px 20px 0 0;max-height:100%;overflow-y:auto}
+.panel input{display:block;width:100%;margin-top:10px;padding:12px;font-size:16px;background:var(--bg);border:1px solid var(--line);border-radius:10px}
+#amt{font-size:26px;font-weight:600;margin-top:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chips button{display:flex;align-items:center;gap:6px;padding:7px 12px;background:none;border:1px solid var(--line);border-radius:999px;font-size:14px}
+.chips .on{border-color:var(--ac);background:var(--bg);font-weight:500}
+.save{width:100%;height:48px;margin-top:14px;border:0;border-radius:12px;background:var(--ac);color:var(--acx);font-weight:600;font-size:16px}
+.toast{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));inset-inline:16px;margin:0 auto;max-width:400px;padding:10px 14px;background:var(--ink);color:var(--bg);border-radius:10px;font-size:13px;text-align:center;display:none}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.hd{display:flex;align-items:center;gap:8px;margin:4px 0 14px}
+.hd h1{flex:1;margin:0}
+.pill{padding:7px 14px;background:var(--card);color:inherit;border:1px solid var(--line);border-radius:999px;font-size:14px}
+.row{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.row:active{background:var(--line)}
+.dt{width:52px;flex:none;color:var(--mute);font-size:12px}
+.det{margin:6px 0 12px}
+.sub{font-size:12px;color:var(--mute);margin:4px 2px 6px}
+.page{position:fixed;inset:0;display:none;overflow:auto;background:var(--bg);padding-top:env(safe-area-inset-top,0px)}
+.act{display:block;width:100%;padding:14px;margin-top:8px;border:0;border-radius:12px;background:var(--bg);color:inherit;font-size:16px;font-weight:500}
+.act.bad{color:var(--bad)}
+.mt{text-align:center;color:var(--mute);margin-bottom:6px}
+.set label{display:block;margin:18px 0 6px;color:var(--mute);font-size:13px}
+.set input{width:100%;padding:12px;font-size:16px;background:var(--card);color:inherit;border:1px solid var(--line);border-radius:10px}
+.set .act{background:var(--card)}
+.ch{font-size:14px;font-weight:600;margin:22px 0 4px}
+.ct,.dn svg{direction:ltr}
+.ct{width:100%;height:auto;display:block}
+.ct text{fill:var(--mute);font-size:10px}
+.dn{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.lg{display:grid;gap:6px;font-size:14px}
+.lg b{color:var(--mute);font-weight:400;margin-inline-start:4px}
+.cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.wk{margin-bottom:4px;text-align:center;font-size:11px;color:var(--mute)}
+.cc{height:46px;border-radius:8px;padding:4px 6px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;cursor:pointer}
+.cc span{color:var(--mute)}.cc b{font-size:13px;font-weight:500}
+.l1{background:color-mix(in srgb,var(--ac) 8%,transparent)}
+.l2{background:color-mix(in srgb,var(--ac) 18%,transparent)}
+.l3{background:color-mix(in srgb,var(--ac) 34%,transparent)}
+.l4{background:var(--ac);color:var(--acx)}.l4 span{color:var(--acx)}
+.td{border:1px solid var(--ac)}
+.sel{outline:2px solid var(--ac);outline-offset:1px}
+.hd2{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mc{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.mc div{background:var(--card);border-radius:10px;padding:8px 12px}
+.mc small{display:block;color:var(--mute);font-size:12px}
+.dh{display:flex;justify-content:space-between;padding:12px 14px;font-weight:500}
+.dh+.row{border-top:1px solid var(--line)}
+#q{display:block;width:100%;margin-top:12px;padding:10px 12px;font-size:16px;background:var(--card);color:inherit;border:1px solid var(--line);border-radius:10px}
+.bn{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:12px 0 0;font-size:13px}
+.bn span{flex:1}
+.cw{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.sw{width:34px;height:34px;border-radius:50%;border:3px solid transparent;padding:0}
+.sw.on{border-color:var(--ink)}
+.lk{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:var(--bg)}
+.lkb{width:260px;text-align:center}
+.dots{display:flex;justify-content:center;gap:14px;margin:18px 0 24px;direction:ltr}
+.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--ac)}
+.dots i.f{background:var(--ac)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;direction:ltr;margin-bottom:14px}
+.pad button{height:62px;border-radius:50%;border:0;background:var(--card);font-size:24px;font-weight:500}
+.toast{z-index:60}
+.top{display:flex;gap:10px}
+.top input{flex:1;min-width:0;width:auto;margin-top:0}
+.ok{flex:none;padding:0 22px;border:0;border-radius:10px;background:var(--ac);color:var(--acx);font-weight:600;font-size:16px}
+.tu{border:0;background:none;color:inherit;text-decoration:underline;font-weight:600;padding:2px 8px}
+.quick{position:fixed;inset-inline:0;bottom:calc(76px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;overflow-x:auto;padding:8px 16px;background:var(--bg);border-top:1px solid var(--line)}
+.quick:empty{display:none}
+.quick button{flex:none;display:flex;gap:6px;align-items:center;padding:8px 14px;background:var(--card);border:1px solid var(--line);border-radius:999px;font-size:14px;white-space:nowrap}
+.quick b{font-weight:500;color:var(--ac);font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd"><h1>مصاريفي</h1><button class="pill" data-a="calendar">الروزنامة</button><button class="pill" data-a="charts">الرسوم</button><button class="pill" data-a="settings">الإعدادات</button></div>
+  <div id="bkb"></div><div class="seg" id="seg"></div>
+  <label class="tg"><input type="checkbox" id="sm"> <span id="smt"></span></label>
+  <input id="q" type="search" placeholder="بحث: بيان أو فئة أو مبلغ" aria-label="بحث" autocomplete="off">
+  <div id="app"></div>
+  <p class="foot">اضغط مطولاً على أي مصروف للتعديل أو الحذف<input type="file" id="rf" accept=".json,application/json" hidden><br><span id="note">البيانات محفوظة على هذا الجهاز فقط، فخذ نسخة احتياطية من وقت لآخر</span></p>
+</div>
+<div class="quick" id="qk"></div>
+<button class="add" data-a="open">＋ إضافة مصروف</button>
+<div class="page" id="ov"><div class="wrap"><div class="hd"><h1 id="ovt"></h1><button class="pill" data-a="ovx">إغلاق</button></div><div id="ovb"></div></div></div>
+<div class="sheet" id="mn" data-a="mclose"><div class="panel" data-a="none"><div class="mt" id="mt"></div><button class="act" data-a="medit">تعديل</button><button class="act bad" data-a="mdel">حذف</button></div></div>
+<div class="sheet" id="sh" data-a="close">
+  <div class="panel" data-a="none">
+    <div class="top"><input id="amt" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="المبلغ بالدينار" aria-label="المبلغ"><button class="ok" data-a="save">حفظ</button></div>
+    <div class="chips" id="chips"></div>
+    <input id="nm" enterkeyhint="done" autocomplete="off" placeholder="البيان (اختياري)" aria-label="البيان">
+    <input id="dt" type="date" aria-label="التاريخ">
+    
+  </div>
+</div>
+<div class="sheet" id="cs" data-a="cclose"><div class="panel" data-a="none"><input id="cn" placeholder="اسم الفئة" autocomplete="off" aria-label="اسم الفئة"><div class="cw" id="cw"></div><button class="act" style="background:var(--ac);color:var(--acx)" data-a="csave">حفظ</button><button class="act bad" id="cdel" data-a="cdel">حذف الفئة</button></div></div>
+<div class="lk" id="lk"><div class="lkb"><h2 id="lkt" style="font-size:18px;margin:0"></h2><div class="dots" id="lkd"></div><div class="pad" id="pad"></div><button class="lnk" id="lkx" data-a="lkx">إلغاء</button><button class="lnk" id="lkf" data-a="lkf">نسيت الرمز؟</button></div></div>
+<div class="toast" id="toast"></div>
+<script>
+let CATS=[["قهوة","#8B5E3C"],["أكل","#3E9B5F"],["نقل","#E0A030"],["سيارة","#4A6FD0"],["البيت","#8E5CC4"],["باراشوك","#D2543F"],["أشخاص","#1FA3A3"],["صدقة","#D9689A"],["أخرى","#8392A3"]];
+let CC=Object.fromEntries(CATS);
+const DN=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const MN=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=n=>n.toLocaleString("en-US",{minimumFractionDigits:3,maximumFractionDigits:3});
+const pd=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const num=s=>parseFloat(s.replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[٫,،]/g,"."));
+let items=[],range="all",small=false,cat=null,pick="قهوة",ref=null,pending=null,loaded=false;
+let q="",sub=null,cmo=0,calSel=null,view=null,bar=null,wipe=false,editId=null,cur=null,menuT=0,lp=null;
+let cfg={theme:"auto",big:100,ws:1};try{Object.assign(cfg,JSON.parse(localStorage.getItem("cfg")||"{}"))}catch(e){}
+if(Array.isArray(cfg.cats)&&cfg.cats.length){CATS=cfg.cats;CC=Object.fromEntries(CATS)}
+const saveCfg=()=>{try{localStorage.setItem("cfg",JSON.stringify(cfg))}catch(e){}};
+const theme=()=>{const r=document.documentElement;if(cfg.theme=="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",cfg.theme)};
+const rowH=(x,dt)=>`<div class="row" data-id="${esc(x.id)}">${dt?`<span class="dt">${pd(x.d).getDate()} ${MN[pd(x.d).getMonth()]}</span>`:`<i class="dot" style="background:${CC[x.c]||"#8392A3"}"></i>`}<span class="n">${esc(x.n)}</span><span class="a ${x.a>=cfg.big?"lg":""}">${fmt(x.a)}</span></div>`;
+
+function toast(m,undo){const t=$("#toast");t.textContent=m+" ";if(undo){const b=document.createElement("button");b.className="tu";b.textContent="تراجع";b.onclick=()=>{undo();t.style.display="none"};t.appendChild(b)}t.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display="none",undo?5000:2600)}
+
+function render(){
+  const t=new Date(),today=iso(t);
+  let from="0000-00-00";
+  if(range=="week"){const d=new Date(t);d.setDate(d.getDate()-6);from=iso(d)}
+  if(range=="month")from=today.slice(0,8)+"01";
+  let all=items.filter(x=>x.d>=from);
+  if(small)all=all.filter(x=>x.a<cfg.big);
+  if(q.trim()){const w=nz(q.trim());all=all.filter(x=>nz(x.n+" "+x.c+" "+x.a).includes(w))}
+  const tot=all.reduce((s,x)=>s+x.a,0);
+  const by={};all.forEach(x=>by[x.c]=(by[x.c]||0)+x.a);
+  const cats=CATS.map(c=>c[0]).filter(c=>by[c]).sort((a,b)=>by[b]-by[a]);
+  if(cat&&!by[cat])cat=null;
+  const start=range=="all"?(items.length?items.reduce((m,x)=>x.d<m?x.d:m,today):today):from;
+  const days=Math.round((pd(today)-pd(start))/864e5)+1;
+  $("#seg").innerHTML=[["week","7 أيام"],["month","هذا الشهر"],["all","الكل"]].map(r=>`<button class="${range==r[0]?"on":""}" data-a="range" data-v="${r[0]}">${r[1]}</button>`).join("");
+  let h="";
+  if(!loaded){h=`<div class="empty">جارٍ التحميل…</div>`}
+  else if(!all.length){h=`<div class="empty">${q.trim()?"لا توجد نتائج للبحث في هذه الفترة.":"لا توجد مصاريف في هذه الفترة.<br>اضغط «إضافة مصروف» لتسجيل أول مصروف."}</div>`}
+  else{
+    h=`<div class="hero"><small>${q.trim()?"مجموع نتائج البحث":"المجموع"}</small><span class="big">${fmt(tot)}</span><span class="u">د</span><small>${all.length} عملية · المعدل اليومي ${fmt(tot/days)} د</small></div>`;
+    h+=`<div class="bar">${cats.map(c=>`<i style="flex:${by[c]};background:${CC[c]}"></i>`).join("")}</div>`;
+    h+=cats.map(c=>{const L=all.filter(x=>x.c==c).sort((p,q)=>p.d<q.d?1:-1);return `<button class="cat ${cat==c?"on":""}" data-a="cat" data-v="${c}" aria-expanded="${cat==c}"><i class="dot" style="background:${CC[c]}"></i><span class="n">${c}</span><span>${fmt(by[c])}</span><span class="p">${Math.round(by[c]/tot*100)}%</span></button>`+(cat==c?`<div class="det"><div class="sub">${L.length} عملية · المتوسط ${fmt(by[c]/L.length)} د</div><div class="card">${L.map(x=>rowH(x,1)).join("")}</div></div>`:"")}).join("");
+    const shown=all;
+    const g={};shown.forEach(x=>(g[x.d]=g[x.d]||[]).push(x));
+    h+=Object.keys(g).sort().reverse().map(d=>{
+      const dt=pd(d),s=g[d].reduce((a,x)=>a+x.a,0);
+      return `<div class="day"><h2><span>${DN[dt.getDay()]} ${dt.getDate()} ${MN[dt.getMonth()]}</span><span>${fmt(s)} د</span></h2><div class="card">${g[d].map(x=>rowH(x)).join("")}</div></div>`}).join("");
+  }
+  $("#app").innerHTML=h;$("#smt").textContent="المصاريف اليومية فقط (أقل من "+cfg.big+" د)";bkBanner();renderQuick();
+}
+
+function chips(){$("#chips").innerHTML=CATS.map(c=>`<button class="${pick==c[0]?"on":""}" data-a="pick" data-v="${c[0]}"><i class="dot" style="background:${c[1]}"></i>${c[0]}</button>`).join("")}
+
+function persist(next){items=next;ensureCats();render();if(view)ov(view);try{localStorage.setItem("ledger",JSON.stringify(next))}catch(e){toast("تعذّر الحفظ على الجهاز")}}
+
+function sel(){const t=new Date(),today=iso(t);let from="0000-00-00";if(range=="week"){const d=new Date(t);d.setDate(d.getDate()-6);from=iso(d)}if(range=="month")from=today.slice(0,8)+"01";let all=items.filter(x=>x.d>=from);if(small)all=all.filter(x=>x.a<cfg.big);return{all,today}}
+const lbl=d=>{const t=pd(d);return t.getDate()+" "+MN[t.getMonth()]};
+function chartsHTML(){
+  const{all,today}=sel();
+  const ctl=`<div class="seg">${[["week","7 أيام"],["month","هذا الشهر"],["all","الكل"]].map(r=>`<button class="${range==r[0]?"on":""}" data-a="range" data-v="${r[0]}">${r[1]}</button>`).join("")}</div><button class="pill" style="margin:10px 0" data-a="small">${small?"✓ ":""}المصاريف اليومية فقط</button>`;
+  if(!all.length)return ctl+`<div class="empty">لا توجد بيانات في هذه الفترة</div>`;
+  const tot=all.reduce((s,x)=>s+x.a,0),by={},dd={};
+  all.forEach(x=>{by[x.c]=(by[x.c]||0)+x.a;dd[x.d]=(dd[x.d]||0)+x.a});
+  const cats=CATS.map(c=>c[0]).filter(c=>by[c]).sort((a,b)=>by[b]-by[a]);
+  let a=pd(Object.keys(dd).sort()[0]);const b=pd(today);
+  if((b-a)/864e5>29){a=new Date(b);a.setDate(b.getDate()-29)}
+  const ds=[];for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1))ds.push(iso(d));
+  const mx=Math.max(...ds.map(d=>dd[d]||0),1),W=340,H=130,bw=W/ds.length;
+  const bars=ds.map((d,i)=>{const v=dd[d]||0,h=v/mx*H,x=(ds.length-1-i)*bw;return `<g data-a="bar" data-v="${d}"><rect x="${x}" y="0" width="${bw}" height="${H}" fill="transparent"/><rect x="${x+1}" y="${H-h}" width="${Math.max(bw-2,1)}" height="${v?Math.max(h,2):0}" rx="2" fill="var(--ac)" opacity="${bar&&bar!=d?.35:1}"/></g>`}).join("");
+  const top=ds.reduce((m,d)=>(dd[d]||0)>(dd[m]||0)?d:m,ds[0]);
+  const cap=bar&&ds.includes(bar)?`${lbl(bar)}: ${fmt(dd[bar]||0)} د`:`أعلى يوم: ${lbl(top)} (${fmt(dd[top]||0)} د) · اضغط على عمود لرؤية قيمته`;
+  const hint=!small&&all.some(x=>x.a>=cfg.big)?`<div class="sub">تلميح: فعّل «المصاريف اليومية فقط» لتظهر الفروق بين الأيام العادية.</div>`:"";
+  let subH="";
+  if(sub&&by[sub]){const g={};all.filter(x=>x.c==sub).forEach(x=>g[x.n]=(g[x.n]||0)+x.a);const ks=Object.keys(g).sort((p,q)=>g[q]-g[p]);const P=ks.slice(0,6).map((k,i)=>({n:k,v:g[k],c:CC[sub],o:1-i*.13}));const rest=ks.slice(6).reduce((q,k)=>q+g[k],0);if(rest>0)P.push({n:"أخرى",v:rest,c:CC[sub],o:.2});subH=`<h2 class="ch">تفاصيل «${esc(sub)}» · ${fmt(by[sub])} د</h2>`+donut(P,by[sub])}
+  return ctl+hint+`<h2 class="ch">المصاريف اليومية</h2><div class="sub">${cap}</div><svg class="ct" viewBox="0 0 ${W} ${H+16}">${bars}<line x1="0" x2="${W}" y1="${H}" y2="${H}" stroke="var(--line)"/><text x="${W}" y="${H+12}" text-anchor="end">${lbl(ds[0])}</text><text x="0" y="${H+12}">${lbl(ds[ds.length-1])}</text></svg><h2 class="ch">حسب الفئة (اضغط على فئة لتفصيلها)</h2>${donut(cats.map(c=>({n:c,v:by[c],c:CC[c],a:"sub"})),tot)}${subH}`;
+}
+function settingsHTML(){
+  return `<div class="set"><label>المظهر</label><div class="seg">${[["auto","تلقائي"],["light","فاتح"],["dark","داكن"]].map(t=>`<button class="${cfg.theme==t[0]?"on":""}" data-a="theme" data-v="${t[0]}">${t[1]}</button>`).join("")}</div>
+<label>حدّ «المصروف الكبير» (بالدينار)</label><input id="big" inputmode="decimal" value="${cfg.big}">
+<label>أول يوم في الأسبوع (الروزنامة)</label><div class="seg">${[[1,"الإثنين"],[6,"السبت"],[0,"الأحد"]].map(t=>`<button class="${cfg.ws==t[0]?"on":""}" data-a="ws" data-v="${t[0]}">${t[1]}</button>`).join("")}</div>
+<label>الفئات (اضغط للتعديل)</label><div class="card">${CATS.map((c,i)=>`<div class="row" data-a="cedit" data-v="${i}" style="cursor:pointer"><i class="dot" style="background:${c[1]}"></i><span class="n">${esc(c[0])}</span><span class="sub" style="margin:0">${items.filter(x=>x.c==c[0]).length}</span></div>`).join("")}</div><button class="act" data-a="cadd">＋ إضافة فئة</button>
+<label>الأمان</label><button class="act" data-a="pin">${cfg.pin?"إيقاف قفل الرمز":"تفعيل قفل بالرمز (4 أرقام)"}</button>${cfg.pin?`<button class="act" data-a="pinch">تغيير الرمز</button>`:""}<div class="sub">القفل يمنع فتح التطبيق على هاتفك لكنه لا يشفّر البيانات. إن نسيت الرمز فلا استرجاع له، فاحتفظ بنسخة احتياطية.</div>
+<label>تذكير النسخة الاحتياطية</label><div class="seg">${[[0,"بدون"],[7,"أسبوع"],[14,"أسبوعان"],[30,"شهر"]].map(t=>`<button class="${(cfg.bk===undefined?7:cfg.bk)==t[0]?"on":""}" data-a="bkr" data-v="${t[0]}">${t[1]}</button>`).join("")}</div>
+<label>البيانات (${items.length} مصروف على هذا الجهاز)</label>
+<button class="act" data-a="xlsx">تصدير إلى Excel (مع الرسوم)</button><button class="act" data-a="export">تصدير CSV</button><button class="act" data-a="backup">نسخة احتياطية</button><button class="act" data-a="restore">استعادة نسخة احتياطية</button>
+<button class="act bad" data-a="wipe">${wipe?"اضغط مرة أخرى لتأكيد حذف كل المصاريف":"حذف كل البيانات"}</button></div>`;
+}
+function donut(P,tot){
+  const R=52,C=2*Math.PI*R;let off=0;
+  const arcs=P.map(p=>{const l=p.v/tot*C,t=`<circle cx="70" cy="70" r="${R}" fill="none" stroke="${p.c}" opacity="${p.o||1}" stroke-width="22" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"${p.a?` data-a="${p.a}" data-v="${esc(p.n)}"`:""}/>`;off+=l;return t}).join("");
+  return `<div class="dn"><svg viewBox="0 0 140 140" width="150" height="150">${arcs}<text x="70" y="75" text-anchor="middle" style="fill:var(--ink);font-size:16px;font-weight:600">${Math.round(tot)}</text></svg><div class="lg">${P.map(p=>`<div${p.a?` data-a="${p.a}" data-v="${esc(p.n)}" style="cursor:pointer;font-weight:${p.n==sub?600:400}"`:""}><i class="dot" style="background:${p.c};opacity:${p.o||1}"></i> ${esc(p.n)} <b>${Math.round(p.v/tot*100)}%</b></div>`).join("")}</div></div>`}
+const SN=["أحد","إثنين","ثلاثاء","أربعاء","خميس","جمعة","سبت"];
+function calHTML(){
+  const t=new Date(),today=iso(t),b=new Date(t.getFullYear(),t.getMonth()+cmo,1),y=b.getFullYear(),m=b.getMonth(),n=new Date(y,m+1,0).getDate(),pre=iso(b).slice(0,8),ym=pre.slice(0,7);
+  const dd={};items.forEach(x=>{if(x.d.startsWith(ym))dd[x.d]=(dd[x.d]||0)+x.a});
+  const mt=Object.values(dd).reduce((q,v)=>q+v,0),hi=Object.keys(dd).sort((p,q)=>dd[q]-dd[p])[0];
+  const lead=(b.getDay()-cfg.ws+7)%7,big=cfg.big;
+  let g="";for(let i=0;i<lead;i++)g+="<div></div>";
+  for(let d=1;d<=n;d++){const k=pre+String(d).padStart(2,"0"),a=dd[k]||0,l=a>=big?4:a>=big*.4?3:a>=big*.1?2:a>0?1:0;
+    g+=`<div class="cc l${l}${k==calSel?" sel":""}${k==today?" td":""}" data-a="day" data-v="${k}"><span>${d}</span><b>${a?(a>=100?Math.round(a):+a.toFixed(1)):""}</b></div>`}
+  let det=`<div class="empty">اضغط على يوم لعرض تفاصيله.</div>`;
+  if(calSel&&calSel.startsWith(ym)){const Ls=items.filter(x=>x.d==calSel),s=Ls.reduce((q,x)=>q+x.a,0);
+    det=`<div class="card" style="margin-top:12px"><div class="dh"><span>${DN[pd(calSel).getDay()]} ${lbl(calSel)}</span><span>${fmt(s)} د</span></div>${Ls.length?Ls.map(x=>rowH(x)).join(""):`<div class="sub" style="padding:0 14px 8px">لا مصاريف مسجّلة في هذا اليوم.</div>`}<div style="padding:10px 14px 14px"><div class="sub">اضغط مطولاً على أي سطر للتعديل أو الحذف</div><button class="act" data-a="addday" data-v="${calSel}">＋ إضافة مصروف لهذا اليوم</button></div></div>`}
+  return `<div class="hd2"><button class="pill" data-a="cmo" data-v="-1">السابق</button><b>${MN[m]} ${y}</b><button class="pill" data-a="cmo" data-v="1">التالي</button></div><div class="mc"><div><small>مجموع الشهر</small><b>${fmt(mt)} د</b></div><div><small>أعلى يوم</small><b>${hi?lbl(hi):"—"}</b></div></div><div class="cg wk">${[0,1,2,3,4,5,6].map(i=>`<div>${SN[(cfg.ws+i)%7]}</div>`).join("")}</div><div class="cg">${g}</div><div class="sub">الأغمق أكثر صرفاً، والأزرق الممتلئ ${big} د فأكثر</div><div id="cdet">${det}</div>`}
+const X=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ser=d=>{const[y,m,k]=d.split("-").map(Number);return Math.round((Date.UTC(y,m-1,k)-Date.UTC(1899,11,30))/864e5)};
+const CL=k=>String.fromCharCode(65+k),r3=v=>Math.round(v*1000)/1000;
+const HD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',RT="http://schemas.openxmlformats.org/officeDocument/2006/relationships/";
+const SM="http://schemas.openxmlformats.org/spreadsheetml/2006/main",CN="http://schemas.openxmlformats.org/drawingml/2006/chart",AN="http://schemas.openxmlformats.org/drawingml/2006/main";
+const cx=(r,k,v,s)=>{const a=CL(k)+r;s=s||0;if(v&&v.f!=null)return `<c r="${a}" s="${s}"${v.str?' t="str"':""}><f>${X(v.f)}</f><v>${v.str?X(v.v):v.v}</v></c>`;if(typeof v=="number")return `<c r="${a}" s="${s}"><v>${v}</v></c>`;return `<c r="${a}" s="${s}" t="inlineStr"><is><t>${X(v)}</t></is></c>`};
+function sheet(cells,w,dr){const R={};cells.forEach(([r,k,v,s])=>(R[r]=R[r]||[]).push([k,cx(r,k,v,s)]));
+  const rows=Object.keys(R).map(Number).sort((a,b)=>a-b).map(r=>`<row r="${r}">${R[r].sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join("")}</row>`).join("");
+  return `${HD}<worksheet xmlns="${SM}" xmlns:r="${RT.slice(0,-1)}"><sheetViews><sheetView rightToLeft="1" workbookViewId="0"/></sheetViews><cols>${w.map((x,i)=>`<col min="${i+1}" max="${i+1}" width="${x}" customWidth="1"/>`).join("")}</cols><sheetData>${rows}</sheetData>${dr?'<drawing r:id="rId1"/>':""}</worksheet>`}
+const STY=`${HD}<styleSheet xmlns="${SM}"><numFmts count="3"><numFmt numFmtId="164" formatCode="0.000"/><numFmt numFmtId="165" formatCode="yyyy-mm-dd"/><numFmt numFmtId="166" formatCode="0.0%"/></numFmts><fonts count="3"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="14"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFDCE6F5"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="8"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="165" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="166" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="164" fontId="1" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1"/><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+const rel=l=>`${HD}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${l.map((t,i)=>`<Relationship Id="rId${i+1}" Type="${RT}${t[0]}" Target="${t[1]}"/>`).join("")}</Relationships>`;
+const dr=l=>`${HD}<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="${AN}" xmlns:r="${RT.slice(0,-1)}" xmlns:c="${CN}">${l.map((q,i)=>`<xdr:twoCellAnchor><xdr:from><xdr:col>${q[0]}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>${q[1]}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from><xdr:to><xdr:col>${q[2]}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>${q[3]}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to><xdr:graphicFrame macro=""><xdr:nvGraphicFramePr><xdr:cNvPr id="${i+2}" name="Chart ${i+1}"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/></xdr:xfrm><a:graphic><a:graphicData uri="${CN}"><c:chart r:id="rId${i+1}"/></a:graphicData></a:graphic></xdr:graphicFrame><xdr:clientData/></xdr:twoCellAnchor>`).join("")}</xdr:wsDr>`;
+function chart(kind,title,cR,vR,cats,vals,colors){
+  const sc=`<c:cat><c:strRef><c:f>${X(cR)}</c:f><c:strCache><c:ptCount val="${cats.length}"/>${cats.map((v,i)=>`<c:pt idx="${i}"><c:v>${X(v)}</c:v></c:pt>`).join("")}</c:strCache></c:strRef></c:cat>`;
+  const nc=`<c:val><c:numRef><c:f>${X(vR)}</c:f><c:numCache><c:formatCode>General</c:formatCode><c:ptCount val="${vals.length}"/>${vals.map((v,i)=>`<c:pt idx="${i}"><c:v>${v}</c:v></c:pt>`).join("")}</c:numCache></c:numRef></c:val>`;
+  const dp=colors?colors.map((k,i)=>`<c:dPt><c:idx val="${i}"/><c:bubble3D val="0"/><c:spPr><a:solidFill><a:srgbClr val="${k.slice(1)}"/></a:solidFill></c:spPr></c:dPt>`).join(""):"";
+  const pie=kind=="pie";
+  const body=pie?`<c:pieChart><c:varyColors val="1"/><c:ser><c:idx val="0"/><c:order val="0"/>${dp}<c:dLbls><c:showLegendKey val="0"/><c:showVal val="0"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="1"/><c:showBubbleSize val="0"/><c:showLeaderLines val="1"/></c:dLbls>${sc}${nc}</c:ser><c:firstSliceAng val="0"/></c:pieChart>`
+  :`<c:barChart><c:barDir val="col"/><c:grouping val="clustered"/><c:varyColors val="0"/><c:ser><c:idx val="0"/><c:order val="0"/><c:spPr><a:solidFill><a:srgbClr val="1F57B5"/></a:solidFill></c:spPr><c:invertIfNegative val="0"/>${sc}${nc}</c:ser><c:gapWidth val="40"/><c:axId val="111"/><c:axId val="222"/></c:barChart><c:catAx><c:axId val="111"/><c:scaling><c:orientation val="minMax"/></c:scaling><c:delete val="0"/><c:axPos val="b"/><c:numFmt formatCode="General" sourceLinked="0"/><c:tickLblPos val="nextTo"/><c:crossAx val="222"/><c:crosses val="autoZero"/><c:auto val="1"/><c:lblAlgn val="ctr"/><c:lblOffset val="100"/></c:catAx><c:valAx><c:axId val="222"/><c:scaling><c:orientation val="minMax"/></c:scaling><c:delete val="0"/><c:axPos val="l"/><c:majorGridlines/><c:numFmt formatCode="General" sourceLinked="0"/><c:tickLblPos val="nextTo"/><c:crossAx val="111"/><c:crosses val="autoZero"/><c:crossBetween val="between"/></c:valAx>`;
+  return `${HD}<c:chartSpace xmlns:c="${CN}" xmlns:a="${AN}" xmlns:r="${RT.slice(0,-1)}"><c:roundedCorners val="0"/><c:chart><c:title><c:tx><c:rich><a:bodyPr/><a:p><a:r><a:t>${X(title)}</a:t></a:r></a:p></c:rich></c:tx><c:overlay val="0"/></c:title><c:autoTitleDeleted val="0"/><c:plotArea><c:layout/>${body}</c:plotArea>${pie?'<c:legend><c:legendPos val="r"/><c:overlay val="0"/></c:legend>':""}<c:plotVisOnly val="1"/></c:chart></c:chartSpace>`}
+function zip(files){
+  const te=new TextEncoder(),parts=[],cd=[];let off=0;
+  const crc=b=>{let c=-1;for(let i=0;i<b.length;i++){c^=b[i];for(let k=0;k<8;k++)c=c&1?(c>>>1)^0xEDB88320:c>>>1}return(~c)>>>0};
+  files.forEach(([n,s])=>{const nb=te.encode(n),d=te.encode(s),h=crc(d);
+    const lh=new DataView(new ArrayBuffer(30));lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint32(14,h,true);lh.setUint32(18,d.length,true);lh.setUint32(22,d.length,true);lh.setUint16(26,nb.length,true);
+    parts.push(new Uint8Array(lh.buffer),nb,d);
+    const ch=new DataView(new ArrayBuffer(46));ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint32(16,h,true);ch.setUint32(20,d.length,true);ch.setUint32(24,d.length,true);ch.setUint16(28,nb.length,true);ch.setUint32(42,off,true);
+    cd.push(new Uint8Array(ch.buffer),nb);off+=30+nb.length+d.length});
+  const cs=cd.reduce((q,x)=>q+x.length,0),e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cd,new Uint8Array(e.buffer)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})}
+function buildXlsx(){
+  const it=items.slice().sort((p,q)=>p.d<q.d?-1:p.d>q.d?1:0),n=it.length,L=n+1,S="'المصاريف'!";
+  const A=`${S}$A$2:$A$${L}`,Cc=`${S}$C$2:$C$${L}`,D=`${S}$D$2:$D$${L}`;
+  const tot=r3(it.reduce((q,x)=>q+x.a,0));
+  const s1=[[1,0,"التاريخ",1],[1,1,"البيان",1],[1,2,"الفئة",1],[1,3,"المبلغ",1]];
+  it.forEach((x,i)=>s1.push([i+2,0,ser(x.d),2],[i+2,1,x.n],[i+2,2,x.c],[i+2,3,x.a,3]));
+  s1.push([n+3,2,"المجموع",7],[n+3,3,{f:`SUM(D2:D${L})`,v:tot},5]);
+  const by={};it.forEach(x=>by[x.c]=(by[x.c]||0)+x.a);
+  const cats=Object.keys(by).sort((p,q)=>by[q]-by[p]),m=cats.length;
+  const s2=[[1,0,"الفئة",1],[1,1,"المجموع",1],[1,2,"النسبة",1],[1,3,"العدد",1]];
+  cats.forEach((c,i)=>{const r=i+2;s2.push([r,0,c],[r,1,{f:`SUMIF(${Cc},A${r},${D})`,v:r3(by[c])},3],[r,2,{f:`B${r}/SUM(B$2:B$${m+1})`,v:by[c]/tot},4],[r,3,{f:`COUNTIF(${Cc},A${r})`,v:it.filter(x=>x.c==c).length}])});
+  s2.push([m+2,0,"المجموع",7],[m+2,1,{f:`SUM(B2:B${m+1})`,v:tot},5]);
+  const dd={};it.forEach(x=>dd[x.d]=(dd[x.d]||0)+x.a);
+  const first=it[0].d,last=it[n-1].d;let a=pd(first);const z=pd(last);if((z-a)/864e5>89){a=new Date(z);a.setDate(z.getDate()-89)}
+  const ds=[];for(let d=new Date(a);d<=z;d.setDate(d.getDate()+1))ds.push(iso(d));const k=ds.length;
+  s2.push([1,5,"اليوم",1],[1,6,"المصروف اليومي",1]);
+  ds.forEach((d,i)=>{const r=i+2;s2.push([r,5,d],[r,6,{f:`SUMIF(${A},${ser(d)},${D})`,v:r3(dd[d]||0)},3])});
+  const mo={};it.forEach(x=>{const q=x.d.slice(0,7);mo[q]=(mo[q]||0)+x.a});
+  s2.push([1,8,"الشهر",1],[1,9,"المجموع",1]);
+  Object.keys(mo).sort().forEach((q,i)=>{const[y,mm]=q.split("-").map(Number),r=i+2;s2.push([r,8,MN[mm-1]+" "+y],[r,9,{f:`SUMIFS(${D},${A},">="&${ser(q+"-01")},${A},"<"&${ser(iso(new Date(y,mm,1)))})`,v:r3(mo[q])},3])});
+  const mx=Math.max(...ds.map(d=>dd[d]||0)),md=ds.find(d=>(dd[d]||0)==mx),days=(pd(last)-pd(first))/864e5+1;
+  s2.push([1,11,"ملخص",1],[1,12,"",1],[2,11,"المجموع"],[2,12,{f:`SUM(${D})`,v:tot},3],[3,11,"عدد العمليات"],[3,12,{f:`COUNT(${D})`,v:n}],[4,11,"عدد الأيام"],[4,12,days],[5,11,"المعدل اليومي"],[5,12,{f:"M2/M4",v:r3(tot/days)},3],[6,11,"أعلى يوم"],[6,12,{f:`INDEX(F2:F${k+1},MATCH(MAX(G2:G${k+1}),G2:G${k+1},0))`,v:md,str:1}],[7,11,"قيمته"],[7,12,{f:`MAX(G2:G${k+1})`,v:r3(mx)},3]);
+  const s3=[],c3=[],T="'تفاصيل الفئات'!";let r=1;
+  cats.forEach(c=>{const g={};it.filter(x=>x.c==c).forEach(x=>g[x.n]=(g[x.n]||0)+x.a);
+    const ks=Object.keys(g).sort((p,q)=>g[q]-g[p]),P=ks.slice(0,6).map(t=>[t,r3(g[t])]),rest=r3(ks.slice(6).reduce((q,t)=>q+g[t],0));if(rest>0)P.push(["أخرى",rest]);
+    s3.push([r,0,c,6],[r+1,0,"البيان",1],[r+1,1,"المبلغ",1]);P.forEach((t,i)=>s3.push([r+2+i,0,t[0]],[r+2+i,1,t[1],3]));
+    c3.push({r0:r-1,t:c+" — التفاصيل",a:`${T}$A$${r+2}:$A$${r+1+P.length}`,b:`${T}$B$${r+2}:$B$${r+1+P.length}`,c:P.map(t=>t[0]),v:P.map(t=>t[1])});r+=17});
+  const SS="'الملخص'!",charts=[chart("pie","المصاريف حسب الفئة",`${SS}$A$2:$A$${m+1}`,`${SS}$B$2:$B$${m+1}`,cats,cats.map(c=>r3(by[c])),cats.map(c=>CC[c]||"#8392A3")),chart("bar","المصاريف اليومية",`${SS}$F$2:$F$${k+1}`,`${SS}$G$2:$G$${k+1}`,ds,ds.map(d=>r3(dd[d]||0))),...c3.map(o=>chart("pie",o.t,o.a,o.b,o.c,o.v))];
+  const ov=(p,t)=>`<Override PartName="${p}" ContentType="application/vnd.openxmlformats-officedocument.${t}+xml"/>`;
+  return zip([
+    ["[Content_Types].xml",`${HD}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>${ov("/xl/workbook.xml","spreadsheetml.sheet.main")}${[1,2,3].map(i=>ov(`/xl/worksheets/sheet${i}.xml`,"spreadsheetml.worksheet")).join("")}${ov("/xl/styles.xml","spreadsheetml.styles")}${[1,2].map(i=>ov(`/xl/drawings/drawing${i}.xml`,"drawing")).join("")}${charts.map((_,i)=>ov(`/xl/charts/chart${i+1}.xml`,"drawingml.chart")).join("")}</Types>`],
+    ["_rels/.rels",rel([["officeDocument","xl/workbook.xml"]])],
+    ["xl/workbook.xml",`${HD}<workbook xmlns="${SM}" xmlns:r="${RT.slice(0,-1)}"><sheets><sheet name="المصاريف" sheetId="1" r:id="rId1"/><sheet name="الملخص" sheetId="2" r:id="rId2"/><sheet name="تفاصيل الفئات" sheetId="3" r:id="rId3"/></sheets></workbook>`],
+    ["xl/_rels/workbook.xml.rels",rel([["worksheet","worksheets/sheet1.xml"],["worksheet","worksheets/sheet2.xml"],["worksheet","worksheets/sheet3.xml"],["styles","styles.xml"]])],
+    ["xl/styles.xml",STY],
+    ["xl/worksheets/sheet1.xml",sheet(s1,[14,28,16,14])],
+    ["xl/worksheets/sheet2.xml",sheet(s2,[16,14,10,10,4,14,16,4,16,14,4,16,14],1)],
+    ["xl/worksheets/_rels/sheet2.xml.rels",rel([["drawing","../drawings/drawing1.xml"]])],
+    ["xl/worksheets/sheet3.xml",sheet(s3,[26,14],1)],
+    ["xl/worksheets/_rels/sheet3.xml.rels",rel([["drawing","../drawings/drawing2.xml"]])],
+    ["xl/drawings/drawing1.xml",dr([[0,13,5,30],[0,31,5,50]])],
+    ["xl/drawings/_rels/drawing1.xml.rels",rel([["chart","../charts/chart1.xml"],["chart","../charts/chart2.xml"]])],
+    ["xl/drawings/drawing2.xml",dr(c3.map(o=>[3,o.r0,10,o.r0+15]))],
+    ["xl/drawings/_rels/drawing2.xml.rels",rel(c3.map((_,i)=>["chart",`../charts/chart${i+3}.xml`]))],
+    ...charts.map((x,i)=>[`xl/charts/chart${i+1}.xml`,x])])}
+function ov(v){view=v;const o=$("#ov");if(!v){o.style.display="none";return}$("#ovt").textContent={charts:"الرسوم البيانية",settings:"الإعدادات",calendar:"الروزنامة"}[v];$("#ovb").innerHTML=v=="charts"?chartsHTML():v=="settings"?settingsHTML():calHTML();o.style.display="block"}
+function menu(id){const x=items.find(i=>i.id==id);if(!x)return;cur=id;menuT=Date.now();$("#mt").textContent=x.n+" · "+fmt(x.a)+" د";$("#mn").classList.add("open")}
+function mclose(){$("#mn").classList.remove("open")}
+document.addEventListener("pointerdown",e=>{const r=e.target.closest(".row[data-id]");if(!r)return;const id=r.dataset.id;lp={x:e.clientX,y:e.clientY,t:setTimeout(()=>{lp=null;if(navigator.vibrate)navigator.vibrate(15);menu(id)},450)}});
+document.addEventListener("pointermove",e=>{if(lp&&Math.hypot(e.clientX-lp.x,e.clientY-lp.y)>10){clearTimeout(lp.t);lp=null}});
+["pointerup","pointercancel"].forEach(t=>document.addEventListener(t,()=>{if(lp){clearTimeout(lp.t);lp=null}}));
+document.addEventListener("contextmenu",e=>{if(e.target.closest(".row[data-id]"))e.preventDefault()});
+document.addEventListener("change",e=>{if(e.target.id=="big"){const v=num(e.target.value);if(v>0){cfg.big=v;saveCfg();render()}}});
+const PAL=["#8B5E3C","#3E9B5F","#E0A030","#4A6FD0","#8E5CC4","#D2543F","#1FA3A3","#D9689A","#8392A3","#2F7D6D","#B5651D","#5B6B8C"];
+const nz=s=>String(s).toLowerCase().replace(/[أإآ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي");
+function syncCats(){CC=Object.fromEntries(CATS)}
+function ensureCats(){let ch=false;items.forEach(x=>{if(!(x.c in CC)){CATS.push([x.c,PAL[CATS.length%PAL.length]]);syncCats();ch=true}});if(ch){cfg.cats=CATS;saveCfg()}}
+let ce=-1,ccol=PAL[0],cdq=false,pm=null,pb="",pt="",hid=0;
+function cw(){$("#cw").innerHTML=PAL.map(k=>`<button class="sw${k==ccol?" on":""}" data-a="ccol" data-v="${k}" style="background:${k}" aria-label="لون"></button>`).join("")}
+function openCat(i){ce=i;cdq=false;const c=i>=0?CATS[i]:["",PAL[CATS.length%PAL.length]];ccol=c[1];$("#cn").value=c[0];cw();$("#cdel").style.display=i>=0?"block":"none";$("#cdel").textContent="حذف الفئة";$("#cs").classList.add("open");setTimeout(()=>$("#cn").focus(),50)}
+function saveCat(){
+  const n=$("#cn").value.trim();if(!n){$("#cn").focus();return}
+  if(CATS.some((c,j)=>j!=ce&&c[0]==n)){toast("هذه الفئة موجودة");return}
+  if(ce>=0){const old=CATS[ce][0];CATS[ce]=[n,ccol];if(old!=n){if(pick==old)pick=n;items=items.map(x=>x.c==old?{...x,c:n}:x)}}
+  else CATS.push([n,ccol]);
+  syncCats();cfg.cats=CATS;saveCfg();persist(items);$("#cs").classList.remove("open");
+}
+function delCat(){
+  const old=CATS[ce][0];if(old=="أخرى"){toast("لا يمكن حذف فئة «أخرى»");return}
+  const k=items.filter(x=>x.c==old).length;
+  if(k&&!cdq){cdq=true;$("#cdel").textContent="تأكيد: نقل "+k+" مصروف إلى «أخرى»";return}
+  if(!CATS.some(c=>c[0]=="أخرى"))CATS.push(["أخرى","#8392A3"]);
+  CATS=CATS.filter(c=>c[0]!=old);syncCats();if(pick==old)pick="أخرى";cfg.cats=CATS;saveCfg();persist(items.map(x=>x.c==old?{...x,c:"أخرى"}:x));$("#cs").classList.remove("open");
+}
+async function hp(p,sl){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(sl+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){let h=0;for(const c of sl+p)h=(h*31+c.charCodeAt(0))|0;return"f"+h}}
+function drawPin(){$("#lkt").textContent={unlock:"أدخل الرمز",set1:"اختر رمزاً من 4 أرقام",set2:"أعد إدخال الرمز للتأكيد",off:"أدخل الرمز لإيقاف القفل"}[pm];$("#lkd").innerHTML=[0,1,2,3].map(i=>`<i class="${i<pb.length?"f":""}"></i>`).join("");$("#lkx").style.display=pm=="unlock"?"none":"inline-block";$("#lkf").style.display=pm=="unlock"?"inline-block":"none"}
+function pinOpen(m){pm=m;pb="";pt="";$("#pad").innerHTML=["1","2","3","4","5","6","7","8","9","","0","b"].map(k=>k?`<button data-a="pk" data-v="${k}">${k=="b"?"⌫":k}</button>`:"<span></span>").join("");drawPin();$("#lk").style.display="flex"}
+async function pinKey(k){
+  if(k=="b"){pb=pb.slice(0,-1);drawPin();return}
+  if(pb.length>=4)return;pb+=k;drawPin();if(pb.length<4)return;
+  if(pm=="set1"){pt=pb;pb="";pm="set2";drawPin()}
+  else if(pm=="set2"){
+    if(pb==pt){const sl=Math.random().toString(36).slice(2)+Date.now();cfg.pin={s:sl,h:await hp(pb,sl)};saveCfg();$("#lk").style.display="none";toast("تم تفعيل القفل");if(view)ov(view)}
+    else{toast("الرمزان غير متطابقين");pm="set1";pb="";pt="";drawPin()}
+  }else{
+    if(await hp(pb,cfg.pin.s)==cfg.pin.h){if(pm=="off"){delete cfg.pin;saveCfg();toast("تم إيقاف القفل");if(view)ov(view)}$("#lk").style.display="none"}
+    else{toast("رمز خاطئ");pb="";drawPin()}
+  }
+}
+function bkBanner(){
+  const e=$("#bkb");if(!e)return;const d=cfg.bk===undefined?7:cfg.bk;let h="";
+  if(d>0&&items.length&&Date.now()>(cfg.snooze||0)){const last=cfg.lastBk||0,days=Math.floor((Date.now()-last)/864e5);if(!last||days>=d)h=`<div class="bn"><span>${last?"مرّ "+days+" يوماً على آخر نسخة احتياطية.":"لم تأخذ نسخة احتياطية بعد."}</span><button class="pill" data-a="backup">نسخ الآن</button><button class="x" data-a="snooze">لاحقاً</button></div>`}
+  e.innerHTML=h;
+}
+$("#q").addEventListener("input",e=>{q=e.target.value;render()});
+$("#cn").addEventListener("keydown",e=>{if(e.key=="Enter"){e.preventDefault();saveCat()}});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)hid=Date.now();else{bkBanner();if(cfg.pin&&hid&&Date.now()-hid>30000&&$("#lk").style.display!="flex")pinOpen("unlock")}});
+function openSheet(id){
+  editId=id||null;const x=editId&&items.find(i=>i.id==editId);
+  if(x)pick=CC[x.c]?x.c:"أخرى";
+  $("#amt").value=x?String(x.a):"";$("#nm").value=x?x.n:"";$("#dt").value=x?x.d:iso(new Date());
+  chips();$("#sh").classList.add("open");fit();setTimeout(()=>$("#amt").focus(),50)}
+function closeSheet(){$("#sh").classList.remove("open");if(document.activeElement)document.activeElement.blur()}
+function fit(){const v=window.visualViewport,s=$("#sh");if(!v)return;s.style.top=v.offsetTop+"px";s.style.height=v.height+"px";s.style.bottom="auto"}
+if(window.visualViewport){visualViewport.addEventListener("resize",fit);visualViewport.addEventListener("scroll",fit)}
+$("#chips").addEventListener("pointerdown",e=>e.preventDefault());
+$("#sh .panel").addEventListener("keydown",e=>{if(e.key!=="Enter")return;e.preventDefault();if(e.target.id=="amt")$("#nm").focus();else add()});
+let Q=[];
+function renderQuick(){
+  const m={};
+  items.forEach(x=>{const k=x.n+"|"+x.c,e=m[k]||(m[k]={n:x.n,c:x.c,k:0,a:0,d:""});e.k++;if(x.d>=e.d){e.d=x.d;e.a=x.a}});
+  Q=Object.values(m).filter(e=>e.k>=2&&e.a<cfg.big).sort((p,q)=>q.k-p.k||(p.d<q.d?1:-1)).slice(0,8);
+  $("#qk").innerHTML=Q.map((e,i)=>`<button data-a="q" data-v="${i}">${esc(e.n)} <b>${+e.a.toFixed(3)}</b></button>`).join("");
+}
+
+function add(){
+  const a=num($("#amt").value);
+  if(!(a>0)){$("#amt").focus();toast("اكتب المبلغ أولاً");return}
+  const o={d:$("#dt").value||iso(new Date()),n:$("#nm").value.trim()||pick,c:pick,a:Math.round(a*1000)/1000};
+  if(editId){const id=editId;persist(items.map(x=>x.id==id?{...x,...o}:x));toast("تم التعديل")}
+  else{persist([...items,{id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),...o}]);toast("تمت الإضافة")}
+  closeSheet();
+}
+
+function dl(name,type,data){const u=URL.createObjectURL(new Blob([data],{type}));const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
+function exp(){
+  const rows=["التاريخ,البيان,الفئة,المبلغ",...items.slice().sort((x,y)=>x.d<y.d?-1:1).map(x=>[x.d,'"'+x.n.replace(/"/g,'""')+'"',x.c,x.a].join(","))];
+  dl("masarifi.csv","text/csv;charset=utf-8","\ufeff"+rows.join("\n"));
+}
+function backup(){dl("masarifi-backup-"+iso(new Date())+".json","application/json",JSON.stringify({items,cats:CATS}));cfg.lastBk=Date.now();saveCfg();bkBanner();toast("تم حفظ النسخة الاحتياطية")}
+$("#rf").addEventListener("change",async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;
+  try{
+    const d=JSON.parse(await f.text());if(!Array.isArray(d.items))throw 0;if(Array.isArray(d.cats)&&d.cats.length){CATS=d.cats.filter(c=>Array.isArray(c)&&c[0]).map(c=>[String(c[0]),String(c[1]||"#8392A3")]);cfg.cats=CATS;syncCats();saveCfg()}
+    persist(d.items.filter(x=>x&&typeof x.id=="string"&&typeof x.d=="string"&&typeof x.a=="number").map(x=>({id:x.id,d:x.d,n:String(x.n||""),c:String(x.c||"أخرى"),a:x.a})));
+    toast("تمت استعادة النسخة الاحتياطية");
+  }catch(_){toast("الملف غير صالح")}
+});
+
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-a]");if(!b)return;
+  const a=b.dataset.a,v=b.dataset.v;if(Date.now()-menuT<250)return;
+  if(a=="range"){range=v;render()}
+  else if(a=="cat"){cat=cat==v?null:v;render()}
+  else if(a=="open")openSheet();
+  else if(a=="close")closeSheet();
+  else if(a=="pick"){pick=v;chips()}
+  else if(a=="q"){const e=Q[v];if(!e)return;const id=Date.now().toString(36)+Math.random().toString(36).slice(2,5);persist([...items,{id,d:iso(new Date()),n:e.n,c:e.c,a:e.a}]);toast("أضيف "+e.n+" "+(+e.a.toFixed(3))+" د",()=>persist(items.filter(x=>x.id!=id)))}
+  else if(a=="save")add();
+  else if(a=="export")exp();else if(a=="backup")backup();else if(a=="restore")$("#rf").click();
+  else if(a=="charts"||a=="settings"||a=="calendar"){if(a=="calendar"){cmo=0;calSel=iso(new Date())}ov(a)}
+  else if(a=="day"){calSel=v;ov(view);const e=$("#cdet");if(e)e.scrollIntoView({behavior:"smooth",block:"nearest"})}
+  else if(a=="cmo"){cmo+=+v;calSel=null}
+  else if(a=="addday"){openSheet();$("#dt").value=v}
+  else if(a=="sub")sub=sub==v?null:v;
+  else if(a=="ws"){cfg.ws=+v;saveCfg()}
+  else if(a=="xlsx"){if(!items.length)toast("لا توجد بيانات للتصدير");else{try{dl("masarifi.xlsx","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",buildXlsx());toast("تم إنشاء ملف Excel")}catch(e){toast("تعذّر إنشاء الملف")}}}
+  else if(a=="ovx")ov(null);
+  else if(a=="bar")bar=bar==v?null:v;
+  else if(a=="small"){small=!small;$("#sm").checked=small;render()}
+  else if(a=="theme"){cfg.theme=v;saveCfg();theme()}
+  else if(a=="wipe"){if(wipe){wipe=false;persist([])}else{wipe=true;setTimeout(()=>{wipe=false;if(view=="settings")ov(view)},4000)}}
+  else if(a=="medit"){mclose();openSheet(cur)}
+  else if(a=="mdel"){const x=items.find(i=>i.id==cur);mclose();if(x){persist(items.filter(i=>i.id!=x.id));toast("حُذف "+x.n,()=>persist([...items,x]))}}
+  else if(a=="cadd")openCat(-1);
+  else if(a=="cedit")openCat(+v);
+  else if(a=="ccol"){ccol=v;cw()}
+  else if(a=="csave")saveCat();
+  else if(a=="cdel")delCat();
+  else if(a=="cclose")$("#cs").classList.remove("open");
+  else if(a=="pk")pinKey(v);
+  else if(a=="lkx")$("#lk").style.display="none";
+  else if(a=="lkf")toast("لا يمكن استرجاع الرمز. امسح بيانات الموقع من إعدادات Chrome ثم استعد نسخة احتياطية.");
+  else if(a=="pin")pinOpen(cfg.pin?"off":"set1");
+  else if(a=="pinch")pinOpen("set1");
+  else if(a=="bkr"){cfg.bk=+v;saveCfg();bkBanner()}
+  else if(a=="snooze"){cfg.snooze=Date.now()+864e5;saveCfg();bkBanner()}
+  else if(a=="mclose")mclose();
+  if(view&&a!="day")ov(view);
+});
+$("#sm").addEventListener("change",e=>{small=e.target.checked;render()});
+
+const SEED=[];
+function init(){theme();if(cfg.pin)pinOpen("unlock");
+  let raw=null;try{raw=localStorage.getItem("ledger")}catch(e){}
+  try{items=raw===null?SEED:JSON.parse(raw)}catch(e){items=[]}
+  if(raw===null){try{localStorage.setItem("ledger",JSON.stringify(items))}catch(e){}}
+  ensureCats();loaded=true;render();
+  if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+  if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+init();
+</script>
+</body>
+</html>
