@@ -267,8 +267,8 @@ function listHTML(){
   return `<div class="sub">${G.length} ${igrp=="c"?"فئة":"مادة"} · المجموع ${fmt(tot)} د</div><div class="card">`+G.map(e=>{
     let h=`<div class="row" data-a="iopen" data-v="${esc(e.k)}" style="cursor:pointer"><i class="dot" style="background:${e.col}"></i><span class="n">${esc(e.n)}</span><span class="sub" style="margin:0">${e.c}×</span><span class="a">${fmt(e.v)}</span></div>`;
     if(iopen==e.k){
-      const H=[0,1,2,3,4,5].map(i=>{const q=cyc((iall?0:ito)-i),v=items.filter(x=>x.d>=q.from&&x.d<=q.to&&(igrp=="c"?x.c==e.n:nz(x.n)==e.k)).reduce((a,x)=>a+x.a,0);return[cl(q),v]}),mx=Math.max(...H.map(z=>z[1]),1);
-      h+=`<div style="padding:8px 14px;background:var(--bg)"><div class="sub">المتوسط للعملية ${fmt(e.v/e.c)} د · آخر 6 أشهر مالية:</div>${H.map(z=>`<div class="hb"><span>${z[0]}</span><div><i style="width:${Math.round(z[1]/mx*100)}%"></i></div><b>${fmt(z[1])}</b></div>`).join("")}</div>`+rowsH(e.L.slice().sort((p,q)=>p.d<q.d?1:-1),1)}
+      const fd=items.reduce((m,x)=>x.d<m?x.d:m,"9999-99-99"),H=[0,1,2,3,4,5].filter(i=>i==0||cyc((iall?0:ito)-i).to>=fd).map(i=>{const q=cyc((iall?0:ito)-i),v=items.filter(x=>x.d>=q.from&&x.d<=q.to&&(igrp=="c"?x.c==e.n:nz(x.n)==e.k)).reduce((a,x)=>a+x.a,0);return[cl(q),v]}),mx=Math.max(...H.map(z=>z[1]),1);
+      h+=`<div style="padding:8px 14px;background:var(--bg)"><div class="sub">المتوسط للعملية ${fmt(e.v/e.c)} د · لكل شهر مالي (منذ أول عملية، حتى 6 أشهر):</div>${H.map(z=>`<div class="hb"><span>${z[0]}</span><div><i style="width:${Math.round(z[1]/mx*100)}%"></i></div><b>${fmt(z[1])}</b></div>`).join("")}</div>`+rowsH(e.L.slice().sort((p,q)=>p.d<q.d?1:-1),1)}
     return h}).join("")+`</div>`}
 function itemsHTML(){
   const c=cyc(ito);
